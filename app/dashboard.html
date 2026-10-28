@@ -1,1 +1,126 @@
-<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Workspace | Digital World</title><link rel="stylesheet" href="../css/style.css"><link rel="stylesheet" href="app.css"></head><body class="app-body"><header class="app-top"><a href="../index.html"><img src="../images/digital-world-logo.png" alt="Digital World"></a><div><span id="user-email"></span> <button id="sign-out" class="small-btn">Sign out</button></div></header><main class="workspace"><aside class="app-sidebar"><p class="eyebrow">WORKSPACE</p><a class="selected" href="dashboard.html">Overview</a><a href="#businesses">Businesses & Portfolios</a><a href="#review-tool">AI Review Assistant</a><a href="#reports">Visitor Reports</a><a href="../portfolio.html">Main Website Portfolio</a></aside><section class="workspace-main"><p class="eyebrow">DIGITAL WORLD · MARKETING OS</p><h1>Workspace</h1><p class="muted">Manage customer businesses, public portfolios and review links in one place.</p><div id="access-warning" class="notice hidden"></div><div id="admin-panel" class="hidden"><section class="app-panel" id="businesses"><div class="panel-heading"><div><h2>Customer businesses</h2><p class="muted">Create and manage public portfolio records.</p></div></div><form id="business-form" class="form-grid"><label>Business name<input name="name" required></label><label>Public slug<input name="slug" placeholder="krishna-motors" required pattern="[a-z0-9-]+"></label><label>Category<input name="category"></label><label>Phone<input name="phone"></label><label>Website<input name="website" type="url" placeholder="https://"></label><label>Google review URL<input name="google_review_url" type="url" placeholder="https://"></label><label class="wide">Short description<textarea name="description" rows="3"></textarea></label><label class="wide">Services (comma separated)<input name="services"></label><button class="app-btn" type="submit">Save business</button></form><p id="business-status" class="status"></p><div id="business-list"></div></section><section class="app-panel" id="reports"><h2>Visitor reports</h2><p class="muted">Portfolio page views recorded by this website. Analytics only begins after deployment and database setup.</p><div id="visitor-summary" class="stat-grid"></div><div id="visitor-list"></div></section></div><div id="customer-panel" class="hidden"><section class="app-panel"><h2>Your business workspace</h2><p id="customer-message" class="muted">Your account is awaiting admin approval or a business assignment.</p><div id="customer-business"></div></section></div><section class="app-panel" id="review-tool"><h2>AI Review Assistant</h2><p class="muted">Create an honest draft based on a real customer experience. Do not invent facts or ask for a specific star rating.</p><label>Business<select id="review-business"></select></label><label>What did the customer actually like?<textarea id="review-experience" rows="3" placeholder="Describe real service, product or experience"></textarea></label><button id="make-review" class="app-btn">Create review draft</button><textarea id="review-output" rows="4" placeholder="Review draft will appear here"></textarea><button id="copy-review" class="small-btn">Copy review & open Google</button><p id="review-status" class="status"></p></section></section></main><script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script><script src="../js/supabase-config.js"></script><script src="app.js"></script></body></html>
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#071d49">
+  <title>Marketing OS | Digital World</title>
+  <link rel="icon" href="../images/digital-world-logo.png">
+  <link rel="stylesheet" href="dashboard-pro.css">
+</head>
+<body>
+  <div class="app-shell">
+    <aside class="sidebar" id="sidebar">
+      <a class="brand" href="../index.html">
+        <img src="../images/digital-world-logo.png" alt="Digital World" onerror="this.style.display='none'">
+        <span><b>Digital World</b><small>MARKETING OS</small></span>
+      </a>
+      <div class="workspace-label">WORKSPACE</div>
+      <nav class="nav">
+        <button class="nav-item active" data-view="overview"><span class="nav-icon">▦</span> Overview</button>
+        <button class="nav-item" data-view="businesses"><span class="nav-icon">▣</span> Businesses <span class="nav-count" id="nav-business-count">—</span></button>
+        <button class="nav-item" data-view="portfolios"><span class="nav-icon">▤</span> Portfolios</button>
+        <button class="nav-item" data-view="cards"><span class="nav-icon">▧</span> Digital cards</button>
+        <button class="nav-item" data-view="reviews"><span class="nav-icon">✳</span> AI review assistant <span class="new-pill">AI</span></button>
+        <button class="nav-item" data-view="analytics"><span class="nav-icon">⌁</span> Website analytics</button>
+        <button class="nav-item" data-view="activity"><span class="nav-icon">◷</span> Recent activity</button>
+      </nav>
+      <div class="sidebar-bottom">
+        <div class="help-card"><span class="help-icon">✦</span><b>Your growth, in one place.</b><p>Manage your digital presence with a clearer view of every business.</p></div>
+        <a href="../index.html" class="website-link">↗ Visit main website</a>
+      </div>
+    </aside>
+
+    <main class="main">
+      <header class="topbar">
+        <button class="mobile-menu" id="mobile-menu" aria-label="Open navigation">☰</button>
+        <div class="breadcrumb">Workspace <span>/</span> <b id="breadcrumb-current">Overview</b></div>
+        <div class="top-actions"><span class="status-dot"></span><span class="status-label">Workspace</span><div class="avatar" id="avatar">DW</div><span class="user-email" id="user-email">Loading account…</span><button class="signout" id="sign-out">Sign out</button></div>
+      </header>
+
+      <section class="page-head">
+        <div><div class="eyebrow">DIGITAL WORLD · MARKETING OS</div><h1 id="page-title">Good to see you.</h1><p id="page-subtitle">Your digital operations, all in one workspace.</p></div>
+        <div class="head-actions"><span class="date-chip" id="today-date">Today</span><button class="btn btn-primary" id="add-business-top">＋ Add business</button></div>
+      </section>
+
+      <div class="notice hidden" id="notice" role="status"></div>
+      <section id="view-overview" class="view active">
+        <div class="stat-grid">
+          <article class="stat-card"><div class="stat-top"><span>Total businesses</span><span class="stat-icon blue">▣</span></div><div class="stat-value" id="stat-businesses">—</div><div class="stat-foot"><span class="mini-dot blue-dot"></span> Managed workspaces</div></article>
+          <article class="stat-card"><div class="stat-top"><span>Portfolios</span><span class="stat-icon purple">▤</span></div><div class="stat-value" id="stat-portfolios">—</div><div class="stat-foot">Public work & projects</div></article>
+          <article class="stat-card"><div class="stat-top"><span>Digital cards</span><span class="stat-icon orange">▧</span></div><div class="stat-value" id="stat-cards">—</div><div class="stat-foot">Shareable business profiles</div></article>
+          <article class="stat-card"><div class="stat-top"><span>Review drafts</span><span class="stat-icon green">✳</span></div><div class="stat-value" id="stat-reviews">—</div><div class="stat-foot">Saved review responses</div></article>
+        </div>
+
+        <div class="content-grid">
+          <article class="panel analytics-panel">
+            <div class="panel-head"><div><h2>Website performance</h2><p>Understand how visitors explore your website.</p></div><button class="select-chip" id="open-analytics">View analytics ↗</button></div>
+            <div class="visitor-summary"><div><span class="muted-label">Visitors</span><strong id="visitor-total">—</strong><small>Tracking setup required</small></div><div class="online-box"><span class="live-dot"></span><div><strong id="visitor-online">—</strong><small>Online now</small></div></div></div>
+            <div class="chart-area"><div class="chart-y"><span>100</span><span>75</span><span>50</span><span>25</span><span>0</span></div><div class="chart-placeholder"><div class="chart-lines"><i></i><i></i><i></i><i></i></div><div class="chart-bars"><span style="height:28%"></span><span style="height:40%"></span><span style="height:34%"></span><span style="height:54%"></span><span style="height:45%"></span><span style="height:70%"></span><span style="height:62%"></span><span style="height:82%"></span><span style="height:56%"></span><span style="height:72%"></span><span style="height:88%"></span><span style="height:67%"></span></div><div class="chart-x"><span>Mon</span><span>Tue</span><span>Wed</span><span>Thu</span><span>Fri</span><span>Sat</span><span>Sun</span></div></div></div>
+            <div class="chart-foot"><span><i class="legend-dot"></i> Visitor trend preview</span><span class="muted-label">Connect analytics to show real data</span></div>
+          </article>
+          <article class="panel quick-panel">
+            <div class="panel-head"><div><h2>Quick actions</h2><p>Move your work forward.</p></div></div>
+            <button class="quick-action" data-go="businesses"><span class="quick-icon blue">＋</span><span><b>Add a business</b><small>Create a client workspace</small></span><span class="arrow">→</span></button>
+            <button class="quick-action" data-go="cards"><span class="quick-icon orange">▧</span><span><b>Create digital card</b><small>Make a shareable profile</small></span><span class="arrow">→</span></button>
+            <button class="quick-action" data-go="reviews"><span class="quick-icon green">✳</span><span><b>Draft a review reply</b><small>Prepare a professional response</small></span><span class="arrow">→</span></button>
+            <button class="quick-action" data-go="analytics"><span class="quick-icon purple">⌁</span><span><b>Explore website analytics</b><small>See pages and traffic sources</small></span><span class="arrow">→</span></button>
+          </article>
+        </div>
+
+        <div class="content-grid lower-grid">
+          <article class="panel"><div class="panel-head"><div><h2>Businesses</h2><p>Your recently added client workspaces.</p></div><button class="text-link" data-go="businesses">View all →</button></div><div id="business-preview" class="table-wrap"><div class="empty-state"><span class="empty-symbol">▣</span><b>Loading business data</b><p>Connecting to your workspace…</p></div></div></article>
+          <article class="panel activity-panel"><div class="panel-head"><div><h2>Workspace health</h2><p>Connection and setup status.</p></div><span class="health-badge">Live checks</span></div><div class="health-row"><span class="health-symbol green">✓</span><div><b>Authentication</b><small id="health-auth">Checking signed-in session</small></div><span class="health-status" id="health-auth-status">Checking</span></div><div class="health-row"><span class="health-symbol blue">◈</span><div><b>Database</b><small id="health-db">Checking data access</small></div><span class="health-status" id="health-db-status">Checking</span></div><div class="health-row"><span class="health-symbol orange">⌁</span><div><b>Visitor analytics</b><small>Tracking integration not yet configured</small></div><span class="health-status pending">Pending</span></div><div class="health-row"><span class="health-symbol purple">✳</span><div><b>AI review generation</b><small>AI provider connection required</small></div><span class="health-status pending">Pending</span></div></article>
+        </div>
+      </section>
+
+      <section id="view-businesses" class="view">
+        <div class="section-toolbar"><div><h2>Business management</h2><p>Add and manage client business profiles.</p></div><button class="btn btn-primary" id="add-business-page">＋ Add business</button></div>
+        <div class="panel"><div class="panel-head"><div><h2>All businesses</h2><p>Business records from your workspace database.</p></div><input class="search-input" id="business-search" placeholder="Search businesses…" type="search"></div><div id="business-list" class="table-wrap"><div class="empty-state"><b>Loading businesses…</b></div></div></div>
+      </section>
+
+      <section id="view-portfolios" class="view">
+        <div class="section-toolbar"><div><h2>Portfolios</h2><p>Showcase client work, services and projects.</p></div></div>
+        <div class="panel"><div class="empty-state spacious"><span class="empty-symbol">▤</span><b>Portfolio workspace</b><p>Your portfolio records will appear here when the existing database fields and publishing flow are connected.</p><button class="btn btn-secondary" data-go="businesses">Manage businesses</button></div></div>
+      </section>
+      <section id="view-cards" class="view">
+        <div class="section-toolbar"><div><h2>Digital visiting cards</h2><p>Manage shareable digital profiles for each business.</p></div></div>
+        <div class="feature-grid"><article class="feature-card"><span class="feature-icon orange">▧</span><h3>Digital card builder</h3><p>Organize contact details, logo, social links and business information for shareable cards.</p><span class="feature-status">Database connection required for create/edit</span></article><article class="feature-card"><span class="feature-icon blue">▦</span><h3>QR code & sharing</h3><p>Each published card can have a public link and QR code for quick sharing.</p><span class="feature-status">Publishing flow to be connected</span></article></div>
+      </section>
+      <section id="view-reviews" class="view">
+        <div class="section-toolbar"><div><h2>AI review assistant</h2><p>Prepare helpful, professional responses to customer reviews.</p></div></div>
+        <div class="review-layout"><article class="panel review-form"><label>Business<select id="review-business"><option value="">Choose a business</option></select></label><label>Customer review<textarea id="review-input" rows="5" placeholder="Paste the customer's review here…"></textarea></label><div class="form-row"><label>Reply language<select id="review-language"><option>English</option><option>Gujarati</option><option>Hindi</option></select></label><label>Tone<select id="review-tone"><option>Professional</option><option>Friendly</option><option>Short and polite</option></select></label></div><button class="btn btn-primary" id="draft-review">Prepare reply draft</button><p class="form-note">This starter does not call an AI API yet. Never put a private AI API key in browser JavaScript.</p></article><article class="panel"><div class="panel-head"><div><h2>Reply draft</h2><p>Review, edit and copy before publishing.</p></div></div><textarea id="review-output" class="output-area" rows="10" placeholder="Your draft will appear here…" readonly></textarea><div class="output-actions"><button class="btn btn-secondary" id="copy-review">Copy draft</button><span id="review-status" class="muted-label" aria-live="polite"></span></div></article></div>
+      </section>
+      <section id="view-analytics" class="view">
+        <div class="section-toolbar"><div><h2>Website analytics</h2><p>Visitors, page views, popular pages and traffic sources.</p></div><span class="date-chip">Digital World Website</span></div>
+        <div class="notice info">Analytics is shown as “not connected” until a real tracking source is configured. No demo numbers are presented as actual visitor data.</div>
+        <div class="stat-grid analytics-stats"><article class="stat-card"><div class="stat-top"><span>Total visitors</span><span class="stat-icon blue">👥</span></div><div class="stat-value">—</div><div class="stat-foot">Waiting for analytics connection</div></article><article class="stat-card"><div class="stat-top"><span>Online now</span><span class="stat-icon green">●</span></div><div class="stat-value">—</div><div class="stat-foot">Requires active visitor tracking</div></article><article class="stat-card"><div class="stat-top"><span>Page views</span><span class="stat-icon purple">▤</span></div><div class="stat-value">—</div><div class="stat-foot">Waiting for analytics connection</div></article><article class="stat-card"><div class="stat-top"><span>Avg. engagement</span><span class="stat-icon orange">◷</span></div><div class="stat-value">—</div><div class="stat-foot">Waiting for analytics connection</div></article></div>
+        <div class="content-grid"><article class="panel"><div class="panel-head"><div><h2>Most viewed pages</h2><p>Pages ranked by page views.</p></div></div><div class="empty-state"><span class="empty-symbol">⌁</span><b>No analytics source connected</b><p>Connect Google Analytics 4 or implement first-party event tracking to populate this report.</p></div></article><article class="panel"><div class="panel-head"><div><h2>Traffic sources</h2><p>Where visitors came from.</p></div></div><div class="empty-state"><span class="empty-symbol">◎</span><b>Waiting for data</b><p>Search, social, referral and direct traffic will appear when tracking is configured.</p></div></article></div>
+      </section>
+      <section id="view-activity" class="view"><div class="section-toolbar"><div><h2>Recent activity</h2><p>Changes and events from your workspace.</p></div></div><div class="panel"><div class="empty-state spacious"><span class="empty-symbol">◷</span><b>Activity feed</b><p>Activity will appear when audit logging is connected to the dashboard actions.</p></div></div></section>
+      <footer class="footer"><span>© <span id="year"></span> Digital World</span><span>Marketing OS <i>•</i> Secure workspace</span></footer>
+    </main>
+  </div>
+
+  <dialog id="business-modal" class="modal">
+    <form id="business-form" method="dialog">
+      <div class="modal-head"><div><div class="eyebrow">CLIENT WORKSPACE</div><h2>Add a business</h2></div><button class="close-modal" type="button" id="close-modal" aria-label="Close">×</button></div>
+      <div class="modal-grid">
+        <label>Business name *<input name="business_name" required placeholder="e.g. Krishna Motors"></label>
+        <label>Public slug *<input name="slug" required placeholder="krishna-motors"></label>
+        <label>Category<input name="category" placeholder="Automotive, Salon, Retail…"></label>
+        <label>Phone<input name="phone" type="tel" placeholder="+91…"></label>
+        <label>Website<input name="website" type="url" placeholder="https://"></label>
+        <label>Google review URL<input name="google_review_url" type="url" placeholder="https://"></label>
+        <label class="full">Short description<textarea name="short_description" rows="3" placeholder="What does this business do?"></textarea></label>
+        <label class="full">Services (comma separated)<input name="services" placeholder="Design, Social Media, Ads"></label>
+      </div>
+      <div class="modal-actions"><span id="business-form-status" class="muted-label" aria-live="polite"></span><button class="btn btn-secondary" type="button" id="cancel-modal">Cancel</button><button class="btn btn-primary" type="submit">Save business</button></div>
+    </form>
+  </dialog>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="../js/supabase-config.js"></script>
+  <script src="dashboard-pro.js"></script>
+</body>
+</html>
