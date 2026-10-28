@@ -1,0 +1,11 @@
+DIGITAL WORLD MARKETING OS — UPDATE NOTES
+- Preserved existing Digital World multi-page site, assets, and CNAME.
+- Updated app to use current Supabase schema: profiles/businesses/portfolios/digital_cards/review_drafts/analytics_events.
+- Configured project URL; public publishable key still must be inserted in js/supabase-config.js.
+- Updated Google OAuth sign-in redirect to app/dashboard.html.
+- Added admin-migration.sql to add super-admin policies and block self-promotion through profiles.
+- Business creation creates associated portfolio and digital-card records; publish/unpublish toggles linked records.
+- Public portfolio displays published business, portfolio, digital card, services, contact links, and basic analytics.
+- Review assistant saves a draft template when database permissions allow; it does not claim to use an AI model.
+- Removed duplicate scripts from portfolio-view.html.
+- Google Business Profile API, Meta publishing, real AI generation, scheduling, billing and full SEO integrations remain future work.
