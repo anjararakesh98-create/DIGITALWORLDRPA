@@ -1,26 +1,32 @@
-Digital World Marketing OS — V2 Dashboard Starter
+DIGITAL WORLD MARKETING OS — INTEGRATION UPDATE
 
-Files:
-- app/dashboard.html
-- app/dashboard-pro.css
-- app/dashboard-pro.js
+This update aligns the Supabase setup with the current GitHub files and the verified profile table:
+public.profiles (id, full_name, email, role, approval_status, created_at, updated_at).
+It does NOT use public.user_profiles and does not drop existing tables or delete records.
 
-GitHub install:
-1. Open https://github.com/anjararakesh98-create/digital-world-ai-marketing-os
-2. Back up the current app/dashboard.html before replacing.
-3. Upload dashboard.html, dashboard-pro.css and dashboard-pro.js into the existing app/ folder. Keep js/supabase-config.js and all other public site files.
-4. Commit changes, wait for GitHub Pages deployment, then open https://www.digitalworldrpa.in/app/dashboard.html.
+STEP 1 — BACKUP
+Before changing a live database, export/backup your Supabase project data.
 
-Included:
-- Business list with View / Edit / Delete and Add.
-- Portfolio list with Add / Edit / Delete.
-- Digital card list with Add / Edit / Delete.
-- Review draft template and save attempt.
-- Overview counts and navigation.
+STEP 2 — RUN THE SQL
+1. Open Supabase project digital-world-marketing.
+2. Open SQL Editor -> New query.
+3. Open supabase/setup.sql from this repository.
+4. Copy the complete SQL file into the SQL Editor and press Run.
+5. Confirm the query succeeds before updating the website.
 
-Important:
-- This version uses the existing Supabase tables and assumes business columns: business_name, slug, category, phone, website, google_review_url, short_description, services. Portfolio/card items assume business_id, title, url, description. Review draft save assumes business_id, review_text, draft_text, language, tone. If your real schema differs, a visible error will appear and the payload must be matched to your schema.
-- It does not automatically deduplicate existing business records. Review the two Digital World rows first, then delete only the duplicate after verifying its ID and associated data.
-- Real-time cross-module updates depend on a common business_id foreign key and compatible table schemas. This UI loads records on page load; realtime subscriptions and public portfolio/card rendering are additional work.
-- Real visitor/online analytics requires GA4 or first-party tracking. No fake visitor counts are shown.
-- AI replies need a secure backend/Edge Function. Never put private AI API keys or Supabase service_role keys in browser JS.
+STEP 3 — GITHUB
+Upload/replace the repository files while preserving the existing folder structure. Do not remove CNAME, images, CSS, or js/supabase-config.js.
+
+STEP 4 — TEST
+1. Open https://www.digitalworldrpa.in/app/dashboard-pro.html and hard refresh (Ctrl+F5).
+2. Test adding a draft business first.
+3. Edit and save that same business.
+4. Create a portfolio and a digital card.
+5. Publish only after checking the public portfolio URL.
+
+IMPORTANT
+- The SQL uses public.profiles and checks role='super_admin' plus approval_status='approved'.
+- Browser code must contain only the Supabase publishable/anon key, never a service_role key.
+- RLS controls access. If any table has additional required columns, a constraint or a different column type than the current dashboard expects, SQL may still need a schema-specific adjustment. Do not disable RLS to bypass errors.
+- Analytics records page views using first-party events; unique visitor counts are approximate session IDs, not verified human identities. The dashboard currently needs its analytics rendering wired to these events to show full analytics cards.
+- Review replies are template-based, not genuine AI-generated replies; do not describe them as AI until a secure server-side model endpoint is connected.

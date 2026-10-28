@@ -384,6 +384,53 @@
     }).join("");
   }
 
+  async function loadAnalytics() {
+    if (!sb) return;
+    const since = new Date(Date.now() - 30 * 24 * 60 * 60 * 1000).toISOString();
+    const { data, error } = await sb.from("analytics_events")
+      .select("event_type,page_path,session_id,referrer,device_type,created_at")
+      .gte("created_at", since).order("created_at", { ascending: false }).limit(5000);
+    if (error) {
+      if ($("visitor-total")) $("visitor-total").textContent = "Setup needed";
+      if ($("analytics-popular-pages")) $("analytics-popular-pages").innerHTML = `<b>Analytics unavailable</b><p>${esc(error.message)}</p>`;
+      return;
+    }
+    const rows = data || [];
+    const pageViews = rows.filter(r => r.event_type === "page_view");
+    const portfolioViews = rows.filter(r => r.event_type === "portfolio_view");
+    const sessions = new Set(rows.map(r => r.session_id).filter(Boolean));
+    const activeAfter = Date.now() - 5 * 60 * 1000;
+    const active = new Set(rows.filter(r => r.session_id && new Date(r.created_at).getTime() >= activeAfter).map(r => r.session_id));
+    const setText = (id, val) => { if ($(id)) $(id).textContent = String(val); };
+    setText("analytics-unique", sessions.size);
+    setText("analytics-online", active.size);
+    setText("analytics-pageviews", pageViews.length);
+    setText("analytics-portfolio-views", portfolioViews.length);
+    setText("visitor-total", sessions.size.toLocaleString("en-IN"));
+    setText("visitor-online", active.size.toLocaleString("en-IN"));
+
+    const pageCounts = {};
+    pageViews.forEach(r => { const path = r.page_path || "/"; pageCounts[path] = (pageCounts[path] || 0) + 1; });
+    const popular = Object.entries(pageCounts).sort((a,b) => b[1]-a[1]).slice(0,10);
+    if ($("analytics-popular-pages")) {
+      $("analytics-popular-pages").innerHTML = popular.length
+        ? `<div class="table-wrap"><table><thead><tr><th>Page</th><th>Views</th></tr></thead><tbody>${popular.map(([path,count])=>`<tr><td>${esc(path)}</td><td>${count}</td></tr>`).join("")}</tbody></table></div>`
+        : '<div class="empty-state"><b>No page views yet</b><p>Visit the public website in a new tab to create a test event.</p></div>';
+    }
+    const sources = {};
+    rows.forEach(r => {
+      let source = "Direct / unknown";
+      if (r.referrer) { try { source = new URL(r.referrer).hostname.replace(/^www\./, "") || source; } catch (_) {} }
+      sources[source] = (sources[source] || 0) + 1;
+    });
+    const sortedSources = Object.entries(sources).sort((a,b)=>b[1]-a[1]).slice(0,8);
+    if ($("analytics-sources")) {
+      $("analytics-sources").innerHTML = sortedSources.length
+        ? sortedSources.map(([source,count])=>`<p style="display:flex;justify-content:space-between;gap:16px"><span>${esc(source)}</span><b>${count}</b></p>`).join("")
+        : '<div class="empty-state"><b>No source data yet</b><p>Referral sources appear after tracked visits.</p></div>';
+    }
+  }
+
   async function init() {
     if (!window.supabase || !window.DW_SUPABASE_URL || !window.DW_SUPABASE_ANON_KEY) {
       notice("Supabase configuration missing. Check ../js/supabase-config.js."); return;
@@ -408,6 +455,7 @@
       await loadTable("portfolios");
       await loadTable("cards");
       await loadReviews();
+      await loadAnalytics();
       say("health-db", "Connected to workspace tables", "success");
       say("health-db-status", "Connected", "success");
     } catch (err) {
