@@ -1,26 +1,26 @@
-# Digital World Marketing OS — Dashboard Starter
+Digital World Marketing OS — V2 Dashboard Starter
 
-This is a safer additive dashboard starter for the existing GitHub Pages website. It does not replace `index.html`, the existing logo, or the public portfolio.
+Files:
+- app/dashboard.html
+- app/dashboard-pro.css
+- app/dashboard-pro.js
 
-## Files
-- `app/dashboard.html` — dashboard layout
-- `app/dashboard-pro.css` — responsive dashboard styles
-- `app/dashboard-pro.js` — Supabase auth, basic table counts, business listing, add-business modal, and starter review templates
+GitHub install:
+1. Open https://github.com/anjararakesh98-create/digital-world-ai-marketing-os
+2. Back up the current app/dashboard.html before replacing.
+3. Upload dashboard.html, dashboard-pro.css and dashboard-pro.js into the existing app/ folder. Keep js/supabase-config.js and all other public site files.
+4. Commit changes, wait for GitHub Pages deployment, then open https://www.digitalworldrpa.in/app/dashboard.html.
 
-## Install in GitHub (web UI)
-1. Open the existing repository: `https://github.com/anjararakesh98-create/digital-world-ai-marketing-os`
-2. Open the `app` folder.
-3. Add `dashboard-pro.css` and `dashboard-pro.js` as new files, copying the files from this ZIP.
-4. Before replacing `app/dashboard.html`, download/save the current file as a backup.
-5. Replace `app/dashboard.html` with this ZIP's `app/dashboard.html`.
-6. Keep `js/supabase-config.js` in place. The page expects it at `../js/supabase-config.js`.
-7. Commit the changes, wait for GitHub Pages to publish, then open `https://www.digitalworldrpa.in/app/dashboard.html`.
+Included:
+- Business list with View / Edit / Delete and Add.
+- Portfolio list with Add / Edit / Delete.
+- Digital card list with Add / Edit / Delete.
+- Review draft template and save attempt.
+- Overview counts and navigation.
 
-## Important integration notes
-- The UI expects the existing Supabase tables: `profiles`, `businesses`, `portfolios`, `digital_cards`, and `review_drafts`.
-- The add-business form uses columns `business_name`, `slug`, `category`, `phone`, `website`, `google_review_url`, `short_description`, and `services`. If your actual `businesses` table uses different column names/types, the save operation will show the database error; adjust the payload to match the actual schema.
-- This starter uses a template-based review draft, not an AI model yet. A real AI integration must run through a secure backend/Edge Function; never expose an AI secret in browser code.
-- Website visitor analytics currently clearly shows “not connected”. To show actual visitors, online users, popular pages and traffic sources, connect GA4 or implement first-party tracking with a defined event schema and consent/privacy behavior. The decorative chart is only a visual placeholder, not real data.
-- Some portfolio/card management sections are scaffolds. They must be connected to the actual table schemas before production use.
-- Do not put a Supabase `service_role` key or Google OAuth client secret into any public JavaScript file.
-- After deployment, verify Supabase Auth URL Configuration includes `https://www.digitalworldrpa.in/app/dashboard.html` and Site URL `https://www.digitalworldrpa.in`.
+Important:
+- This version uses the existing Supabase tables and assumes business columns: business_name, slug, category, phone, website, google_review_url, short_description, services. Portfolio/card items assume business_id, title, url, description. Review draft save assumes business_id, review_text, draft_text, language, tone. If your real schema differs, a visible error will appear and the payload must be matched to your schema.
+- It does not automatically deduplicate existing business records. Review the two Digital World rows first, then delete only the duplicate after verifying its ID and associated data.
+- Real-time cross-module updates depend on a common business_id foreign key and compatible table schemas. This UI loads records on page load; realtime subscriptions and public portfolio/card rendering are additional work.
+- Real visitor/online analytics requires GA4 or first-party tracking. No fake visitor counts are shown.
+- AI replies need a secure backend/Edge Function. Never put private AI API keys or Supabase service_role keys in browser JS.
