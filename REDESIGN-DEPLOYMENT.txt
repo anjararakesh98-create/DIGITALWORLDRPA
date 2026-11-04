@@ -1,0 +1,24 @@
+DIGITAL WORLD — COMPLETE WEBSITE REDESIGN
+
+WHAT CHANGED
+- Rebuilt the public homepage as a concise premium one-page website.
+- Consolidated public navigation into Services, Our Work, About and Contact.
+- Added a monthly package section, selected work gallery, and direct social links.
+- Added responsive desktop, tablet and mobile layouts, mobile menu, hover effects and subtle lighting.
+- Added direct Instagram, Facebook, Threads, WhatsApp and website links supplied by the owner.
+- Added WhatsApp floating contact shortcut.
+- Legacy public pages now redirect to the relevant section on the new homepage so old links continue to work.
+- Kept the app/ folder, sign-in, dashboards, Supabase configuration, SQL, analytics scripts, portfolio-view dynamic page, images and CNAME.
+
+DEPLOYMENT
+1. Keep a backup of the current GitHub repository.
+2. Extract this ZIP.
+3. Upload the contents of DIGITALWORLDRPA-main/ into the root of the existing GitHub repository, preserving folders.
+4. Commit the changes.
+5. Wait for GitHub Pages deployment and hard-refresh the website (Ctrl+F5).
+6. Test desktop and mobile, each social link, WhatsApp, Client Login, and dashboard access.
+
+IMPORTANT
+- No Supabase schema or credentials were changed.
+- Admin/dashboard functionality was intentionally preserved, but should be tested after deployment.
+- The live website has not been deployed by this ZIP creation.
