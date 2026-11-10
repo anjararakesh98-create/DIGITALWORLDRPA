@@ -73,6 +73,7 @@
 </main>
 <footer class="dw-footer"><div class="dw-container dw-footer-top"><a class="dw-footer-logo" href="#top"><img src="images/digital-world-logo.png" alt="Digital World"></a><span>Creative. Digital. Growth.</span><a href="app/sign-in.html">Client Login ↗</a></div><div class="dw-container dw-footer-bottom"><span>© <span id="year"></span> Digital World. All rights reserved.</span><a href="#top">Back to top ↑</a></div></footer>
 <a class="dw-whatsapp-float" href="https://wa.me/917600124041" target="_blank" rel="noopener" aria-label="Chat with Digital World on WhatsApp">◉</a>
+<script src="js/google-ads-conversions.js"></script>
 <script src="js/script.js"></script><script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script><script src="js/supabase-config.js"></script><script src="js/analytics.js"></script>
 <script>
 document.addEventListener('DOMContentLoaded',()=>{const b=document.querySelector('.dw-menu-toggle'),n=document.querySelector('.dw-nav-links');if(b&&n){b.addEventListener('click',()=>{const o=b.getAttribute('aria-expanded')==='true';b.setAttribute('aria-expanded',String(!o));n.classList.toggle('is-open',!o)});n.querySelectorAll('a').forEach(a=>a.addEventListener('click',()=>{n.classList.remove('is-open');b.setAttribute('aria-expanded','false')}))}const y=document.getElementById('year');if(y)y.textContent=new Date().getFullYear();});

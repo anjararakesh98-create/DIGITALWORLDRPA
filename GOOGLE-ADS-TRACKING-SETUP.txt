@@ -1,0 +1,17 @@
+GOOGLE ADS CONVERSION TRACKING - DIGITAL WORLD
+
+Google Ads Conversion ID: AW-18510400390
+Contact Conversion action: AW-18510400390/i0JfCKP-_K8dEIaXufpE
+
+What was changed:
+1. Confirmed the Google tag (gtag.js) is already installed once in index.html.
+2. Added js/google-ads-conversions.js and loaded it on the live homepage.
+3. WhatsApp (wa.me / whatsapp.com) link clicks and telephone (tel:) link clicks send the Google Ads Contact conversion event.
+4. No conversion event is sent on ordinary page views.
+5. Private dashboard / sign-in pages are intentionally not tagged.
+
+Important measurement note:
+This records a click to start a WhatsApp conversation or phone call. It does not prove that a WhatsApp message was sent, a call connected, or a sale occurred. In Google Ads, interpret this as a contact-intent conversion.
+
+Deployment:
+Upload the updated contents of this ZIP to the same GitHub repository / hosting project, replacing the corresponding files. Do not upload the outer folder as an extra nested folder if your repository currently has the site files at its root. After deployment, test by opening the live website and clicking the WhatsApp and phone links. Google Ads diagnostics may take time to verify; use Google Tag Assistant to confirm the conversion event fires.
