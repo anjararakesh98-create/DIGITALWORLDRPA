@@ -515,3 +515,7 @@ button,input,select,textarea{font:inherit}
 .dw-faq-item:focus-within{outline:3px solid rgba(0,194,255,.45);outline-offset:3px}
 .dw-logo-card>img{width:100%;height:auto;aspect-ratio:900 / 525;object-fit:contain}
 @media(max-width:680px){.dw-faq-item{padding:0 15px}.dw-faq-item summary{font-size:13px;line-height:1.5}.dw-faq-item p{font-size:12px}}
+
+/* Maintain readable warm accents on the dark About section. */
+.dw-eyebrow-light{color:#ffd08f}
+.dw-about-section h2 em{color:#ffb45c}
