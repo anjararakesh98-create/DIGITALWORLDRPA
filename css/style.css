@@ -20,3 +20,133 @@ button,input,select,textarea{font:inherit}
 @media(max-width:680px){.dw-container{width:calc(100% - 36px)}.dw-header{height:70px}.dw-brand{width:155px}.dw-brand img{max-height:52px}.dw-menu-toggle{display:flex;width:42px;height:42px;border:1px solid var(--dw-line);border-radius:8px;background:#fff;align-items:center;justify-content:center;flex-direction:column;gap:5px}.dw-menu-toggle span{display:block;width:18px;height:2px;background:var(--dw-navy);border-radius:2px}.dw-nav-links{display:none;position:absolute;left:0;right:0;top:70px;padding:13px 18px 19px;background:#fff;border-bottom:1px solid var(--dw-line);box-shadow:0 16px 25px #082d6b12;align-items:stretch;gap:0;flex-direction:column}.dw-nav-links.is-open{display:flex}.dw-nav-links>a:not(.dw-nav-cta){padding:13px 4px;border-bottom:1px solid #f0f3f8}.dw-nav-cta{justify-content:center;margin-top:12px}.dw-hero{padding:48px 0 22px}.dw-hero-grid{grid-template-columns:1fr;gap:8px}.dw-hero h1{font-size:clamp(43px,11vw,59px);margin:19px 0 15px}.dw-hero-copy>p{font-size:14px;line-height:1.75}.dw-hero-actions{gap:9px;margin-top:22px}.dw-button{min-height:47px;padding:0 15px;font-size:12px;gap:12px}.dw-hero-proof{margin-top:26px}.dw-hero-visual{min-height:250px;margin:0 8px}.dw-logo-card{width:min(83%,340px);padding:14px;border-radius:12px}.dw-float-chip{right:-3px;top:15px;padding:9px 10px;font-size:7px}.dw-orb-one{width:260px;height:260px}.dw-orb-two{width:210px;height:210px}.dw-hero-bottom{margin-top:15px;gap:10px;font-size:7px}.dw-section{padding:64px 0 68px}.dw-section-heading{display:block;margin-bottom:24px}.dw-section-heading h2{font-size:34px}.dw-section-heading>p{margin-top:12px;font-size:13px}.dw-service-grid{grid-template-columns:1fr 1fr;gap:9px}.dw-service-card{min-height:198px;padding:17px 14px;border-radius:10px}.dw-service-top{margin-bottom:16px}.dw-service-icon{width:36px;height:36px;font-size:18px}.dw-service-card h3{font-size:13px;line-height:1.35}.dw-service-card p{font-size:10px;line-height:1.65}.dw-work-section{padding:64px 0}.dw-gallery{grid-template-columns:1fr 1fr;gap:10px}.dw-work-card:last-child{display:none}.dw-work-card>span{padding:12px;font-size:11px}.dw-about-section{padding:57px 0}.dw-about-grid{grid-template-columns:1fr;gap:13px}.dw-about-section h2{font-size:39px;margin:13px 0}.dw-about-copy>p{font-size:13px}.dw-about-points{gap:7px}.dw-about-points span{font-size:9px;padding:9px}.dw-package-section{padding:65px 0}.dw-package-grid{grid-template-columns:1fr;gap:25px}.dw-package-section h2{font-size:42px;margin:13px 0}.dw-package-section>div>div:first-child>p{font-size:13px}.dw-price-card{padding:23px;border-radius:12px}.dw-price{font-size:43px}.dw-contact-section{padding:64px 0 68px}.dw-contact-heading h2{font-size:42px}.dw-contact-heading>p{font-size:13px}.dw-social-grid{grid-template-columns:1fr;gap:9px;margin:25px auto 21px}.dw-social-link{padding:12px 13px}.dw-social-symbol{width:38px;height:38px;flex-basis:38px}.dw-footer-top{flex-wrap:wrap;justify-content:center;text-align:center;gap:12px}.dw-footer-logo{width:132px}.dw-footer-top>span{width:100%;order:3}.dw-footer-bottom{font-size:9px}.dw-whatsapp-float{right:14px;bottom:14px;width:49px;height:49px}}
 @media(max-width:380px){.dw-service-grid{grid-template-columns:1fr}.dw-service-card{min-height:unset}.dw-gallery{grid-template-columns:1fr}.dw-work-card:last-child{display:block}.dw-hero-actions .dw-button{width:100%}}
 @media(prefers-reduced-motion:reduce){.dw-site html{scroll-behavior:auto}.dw-site *, .dw-site *:before,.dw-site *:after{transition:none!important;animation:none!important}}
+
+/* ===== PREMIUM CARD FIT, DEPTH & INTERACTION POLISH ===== */
+
+/* Keep the complete artwork visible: never crop logos or headline text. */
+.dw-work-card{
+  isolation:isolate;
+  border-radius:16px;
+  border-color:#e1e9f4;
+  box-shadow:0 10px 28px rgba(8,45,107,.07),0 2px 6px rgba(8,45,107,.035);
+  transform:perspective(1100px) translateY(0) rotateX(0);
+  transition:transform .38s cubic-bezier(.2,.75,.25,1),box-shadow .38s,border-color .3s;
+}
+.dw-work-card::before{
+  content:"";
+  position:absolute;
+  z-index:-1;
+  inset:-1px;
+  border-radius:inherit;
+  background:linear-gradient(135deg,rgba(0,194,255,.28),rgba(7,86,200,.08) 45%,rgba(255,138,0,.24));
+  opacity:0;
+  filter:blur(15px);
+  transition:opacity .35s;
+}
+.dw-work-card img{
+  width:100%;
+  aspect-ratio:4 / 4.6;
+  height:auto;
+  object-fit:contain;
+  object-position:center;
+  padding:7px 7px 0;
+  background:linear-gradient(145deg,#fff,#f9fbff);
+  transform:none;
+  transition:filter .35s;
+}
+.dw-work-card:hover{
+  transform:perspective(1100px) translateY(-8px) rotateX(1.2deg);
+  border-color:#c8d9ef;
+  box-shadow:0 25px 55px rgba(8,45,107,.15),0 7px 18px rgba(0,194,255,.09);
+}
+.dw-work-card:hover::before{opacity:1}
+.dw-work-card:hover img{transform:none;filter:saturate(1.04)}
+.dw-work-card>span{
+  position:relative;
+  min-height:58px;
+  padding:15px 20px;
+  background:linear-gradient(180deg,#fff,#fbfcff);
+  border-top:1px solid #edf1f7;
+}
+.dw-work-card>span i{transition:transform .25s,text-shadow .25s}
+.dw-work-card:hover>span i{transform:translate(3px,-3px);text-shadow:0 0 12px rgba(255,138,0,.55)}
+
+/* Consistent dimensional hover across service, pricing and social cards. */
+.dw-service-card,.dw-price-card,.dw-social-link{
+  transform:translateY(0);
+  transition:transform .32s cubic-bezier(.2,.75,.25,1),box-shadow .32s,border-color .32s,background .32s;
+}
+.dw-service-card:hover,.dw-price-card:hover,.dw-social-link:hover{
+  transform:translateY(-5px);
+  border-color:#c7d9f0;
+  box-shadow:0 18px 42px rgba(8,45,107,.11),0 0 22px rgba(0,194,255,.055);
+}
+.dw-price-card{position:relative;overflow:hidden}
+.dw-price-card::before{
+  content:"";
+  position:absolute;
+  inset:0 0 auto;
+  height:3px;
+  background:linear-gradient(90deg,var(--dw-blue),var(--dw-cyan),var(--dw-orange));
+  opacity:.8;
+}
+.dw-social-link:hover .dw-social-symbol{box-shadow:0 0 0 5px rgba(7,86,200,.055),0 0 18px rgba(0,194,255,.15)}
+
+/* Soft light sweep and glow for every primary action. */
+.dw-button,.dw-nav-cta,.dw-contact-cta{
+  position:relative;
+  isolation:isolate;
+  overflow:hidden;
+  box-shadow:0 8px 20px rgba(8,45,107,.15);
+  transition:transform .28s,box-shadow .28s,background .28s,border-color .28s;
+}
+.dw-button::before,.dw-nav-cta::before,.dw-contact-cta::before{
+  content:"";
+  position:absolute;
+  z-index:-1;
+  top:-60%;
+  left:-65%;
+  width:42%;
+  height:220%;
+  transform:rotate(22deg);
+  background:linear-gradient(90deg,transparent,rgba(255,255,255,.28),transparent);
+  transition:left .55s ease;
+}
+.dw-button:hover,.dw-nav-cta:hover,.dw-contact-cta:hover{
+  transform:translateY(-3px);
+  box-shadow:0 13px 28px rgba(7,86,200,.23),0 0 22px rgba(0,194,255,.16);
+}
+.dw-button:hover::before,.dw-nav-cta:hover::before,.dw-contact-cta:hover::before{left:130%}
+.dw-button-secondary:hover{
+  background:#fff;
+  border-color:#9fc8ef;
+  box-shadow:0 10px 24px rgba(0,194,255,.12),0 0 0 3px rgba(0,194,255,.06);
+}
+.dw-text-link{transition:color .22s,text-shadow .22s}
+.dw-text-link:hover{color:var(--dw-blue);text-shadow:0 0 16px rgba(0,194,255,.2)}
+.dw-text-link span{transition:transform .22s,text-shadow .22s}
+.dw-text-link:hover span{transform:translate(4px,-3px);text-shadow:0 0 12px rgba(255,138,0,.6)}
+
+/* Keyboard users receive the same clear interaction affordance. */
+.dw-work-card:focus-visible,.dw-button:focus-visible,.dw-nav-cta:focus-visible,
+.dw-contact-cta:focus-visible,.dw-social-link:focus-visible,.dw-text-link:focus-visible{
+  outline:3px solid rgba(0,194,255,.7);
+  outline-offset:4px;
+}
+@media(hover:none){
+  .dw-work-card:hover,.dw-service-card:hover,.dw-price-card:hover,.dw-social-link:hover,
+  .dw-button:hover,.dw-nav-cta:hover,.dw-contact-cta:hover{transform:none}
+  .dw-work-card::before{display:none}
+}
+@media(max-width:680px){
+  .dw-work-card{border-radius:12px}
+  .dw-work-card img{padding:5px 5px 0;aspect-ratio:4 / 4.6;object-fit:contain}
+  .dw-work-card>span{min-height:48px;padding:12px 13px}
+}
+@media(prefers-reduced-motion:reduce){
+  .dw-work-card,.dw-work-card img,.dw-service-card,.dw-price-card,.dw-social-link,
+  .dw-button,.dw-nav-cta,.dw-contact-cta,.dw-text-link,.dw-text-link span{
+    transition:none!important;transform:none!important
+  }
+  .dw-button::before,.dw-nav-cta::before,.dw-contact-cta::before{display:none}
+}
