@@ -1,20 +1,16 @@
 # Digital World
 
-Public website for Digital World — Creative. Digital. Growth.
+Single-page public website for Digital World — Creative. Digital. Growth.
 
-## Live website
-https://www.digitalworldrpa.in/
+Live website: https://www.digitalworldrpa.in/
 
-## Project structure
-- `index.html` — public homepage and SEO metadata
-- `css/style.css` — active homepage styles
-- `images/` — website logo and portfolio images
-- `js/google-ads-conversions.js` — Google Ads conversion tracking
-- `robots.txt` and `sitemap.xml` — search engine discovery
-- Legacy HTML redirects — preserve old public URLs
-- `supabase/` — retained SQL setup and migration reference files
+## Active website files
+- `index.html` — the complete one-page website, social links and SEO metadata
+- `css/style.css` — website layout, responsive styles and interactions
+- `images/digital-world-logo.png` — official logo
+- `images/2(1).webp`, `images/3(1).webp`, `images/4(1).webp` — homepage portfolio cards
+- `js/google-ads-conversions.js` — Google Ads contact-click conversion tracking used by the homepage
+- `robots.txt` and `sitemap.xml` — search engine crawl and discovery files
+- `CNAME` — custom domain configuration for GitHub Pages
 
-## Deployment
-The site is hosted as a static GitHub Pages website. Keep the root `CNAME` file and the active website files above.
-
-Do not upload private keys, service-role credentials, passwords, or customer data to this repository.
+No Supabase, database, login, dashboard or backend is used by this website.
