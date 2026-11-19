@@ -352,3 +352,37 @@ button,input,select,textarea{font:inherit}
     filter: none;
   }
 }
+
+
+/* Floating WhatsApp action: use the recognizable WhatsApp brand mark, not a generic glyph. */
+.dw-whatsapp-float{
+  width:58px;
+  height:58px;
+  display:grid;
+  place-items:center;
+  border:1px solid rgba(37,211,102,.18);
+  border-radius:50%;
+  background:linear-gradient(145deg,#fff 0%,#f7fff9 100%);
+  color:#25D366;
+  box-shadow:0 8px 24px rgba(8,45,107,.16),0 0 0 5px rgba(37,211,102,.08),inset 0 1px 0 #fff;
+  transition:transform .24s ease,box-shadow .24s ease;
+}
+.dw-whatsapp-float svg{
+  display:block;
+  width:34px;
+  height:34px;
+  filter:drop-shadow(0 1px 1px rgba(0,0,0,.08));
+}
+.dw-whatsapp-float:hover{
+  transform:translateY(-3px) scale(1.06);
+  color:#20bd5a;
+  box-shadow:0 12px 30px rgba(8,45,107,.19),0 0 0 7px rgba(37,211,102,.11),0 0 20px rgba(37,211,102,.17);
+}
+.dw-whatsapp-float:focus-visible{
+  outline:3px solid rgba(37,211,102,.45);
+  outline-offset:4px;
+}
+@media(max-width:680px){
+  .dw-whatsapp-float{right:14px;bottom:14px;width:54px;height:54px}
+  .dw-whatsapp-float svg{width:32px;height:32px}
+}
