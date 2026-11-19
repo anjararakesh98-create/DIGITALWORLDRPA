@@ -386,3 +386,53 @@ button,input,select,textarea{font:inherit}
   .dw-whatsapp-float{right:14px;bottom:14px;width:54px;height:54px}
   .dw-whatsapp-float svg{width:32px;height:32px}
 }
+
+
+/* Footer logo: lock the image to its original landscape proportions on every viewport. */
+.dw-footer-logo{
+  box-sizing:border-box;
+  width:160px;
+  height:100px;
+  min-width:0;
+  flex:0 0 160px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  overflow:hidden;
+}
+.dw-footer-logo img{
+  display:block;
+  width:100%;
+  height:auto !important;
+  max-width:100%;
+  max-height:88px;
+  aspect-ratio:900 / 525;
+  object-fit:contain;
+  object-position:center;
+}
+@media(max-width:680px){
+  .dw-footer-top{
+    flex-direction:column;
+    align-items:center;
+    justify-content:center;
+    gap:10px;
+  }
+  .dw-footer-logo{
+    width:150px;
+    height:88px;
+    flex:0 0 88px;
+  }
+  .dw-footer-logo img{
+    width:100%;
+    max-height:78px;
+  }
+  .dw-footer-top>span{
+    width:auto;
+    order:initial;
+    text-align:center;
+  }
+  .dw-footer-bottom{
+    gap:12px;
+    flex-wrap:wrap;
+  }
+}
