@@ -176,5 +176,6 @@
 <script src="js/google-ads-conversions.js" defer></script>
 <script>
 document.addEventListener('DOMContentLoaded',()=>{const b=document.querySelector('.dw-menu-toggle'),n=document.querySelector('.dw-nav-links');if(b&&n){b.addEventListener('click',()=>{const o=b.getAttribute('aria-expanded')==='true';b.setAttribute('aria-expanded',String(!o));n.classList.toggle('is-open',!o)});n.querySelectorAll('a').forEach(a=>a.addEventListener('click',()=>{n.classList.remove('is-open');b.setAttribute('aria-expanded','false')}))}const y=document.getElementById('year');if(y)y.textContent=new Date().getFullYear();});
+document.addEventListener('click',(event)=>{const link=event.target.closest('a[href]');if(!link||typeof window.gtag!=='function')return;const href=link.getAttribute('href')||'';let method='';if(/^https?:\\/\\/(wa\\.me|api\\.whatsapp\\.com)\\//i.test(href))method='whatsapp';else if(/^tel:/i.test(href))method='phone';else if(/^mailto:/i.test(href))method='email';if(method){window.gtag('event','contact_click',{contact_method:method,link_url:href,link_text:(link.innerText||'').trim().slice(0,100)});}});
 </script>
 </body></html>
