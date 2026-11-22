@@ -27,10 +27,24 @@
 <section id="featured-packages" aria-label="Social media management packages"></section>
 <section id="catalog" class="catalog" aria-label="Other Digital World services" aria-live="polite"></section>
 <section class="order" id="order">
+<div class="order-layout">
+<div class="order-left">
 <div class="order-heading"><span class="eyebrow">START YOUR PROJECT</span><h2>Place a service request</h2><p>Complete your details and UPI payment reference together. Your order and payment reference will be submitted for manual verification.</p><p class="small">Your payment is not automatically verified. Digital World will check the credit in its PhonePe / bank account before approval.</p></div>
-<div class="checkout-grid">
-<form id="order-form">
-<div class="checkout-form-heading"><h3>Your project details</h3><p>All fields marked required must be completed.</p></div>
+<aside class="payment-card" id="payment-card">
+<div class="payment-card-head"><span class="eyebrow">UPI PAYMENT</span><h3>Scan &amp; pay</h3></div>
+<div class="payment-qr-wrap"><img id="payment-qr" alt="Digital World UPI payment QR" width="116" height="116" hidden><span id="payment-amount">Select a package to see the amount</span></div>
+<div class="payment-payee">Payee: <strong>ANJARA RAKESHBHAI PALJIBHAI</strong></div>
+<div class="payment-upi">UPI ID: <strong>9712424041@ybl</strong><button type="button" id="copy-upi">Copy</button></div>
+<div class="payment-fields">
+<label>UTR / Transaction ID<input name="utr_reference" id="utr-reference" form="order-form" required minlength="8" maxlength="64" autocomplete="off" placeholder="Enter transaction ID"></label>
+<label>Payment reference details<input name="reference_details" id="reference-details" form="order-form" required minlength="4" maxlength="500" autocomplete="off" placeholder="Payer name, time, UPI app / bank"></label>
+</div>
+<p class="payment-warning">Payment is pending until manually checked in PhonePe / bank.</p>
+</aside>
+</div>
+<form id="order-form" class="checkout-form">
+<div class="checkout-form-heading"><h3>Your project details</h3><p>Complete the required fields to submit your request.</p></div>
+<div class="checkout-fields">
 <label>Your name<input name="customer_name" required minlength="2" maxlength="120" autocomplete="name"></label>
 <label>Email address<input name="customer_email" type="email" required maxlength="254" autocomplete="email"></label>
 <label>Phone number<input name="customer_phone" type="tel" required minlength="8" maxlength="20" autocomplete="tel"></label>
@@ -38,20 +52,10 @@
 <label>Selected service<select name="service_id" id="service-select" required><option value="">Choose a service</option></select></label>
 <label>Package<select name="package_id" id="package-select" required disabled><option value="">Choose a package</option></select></label>
 <label class="wide">Project details<textarea name="requirements" rows="3" maxlength="4000" placeholder="Tell us about your business, goals and requirements."></textarea></label>
-<button type="submit" id="submit" disabled>Submit service request</button>
-<p class="form-foot">The request is submitted only after the payment reference fields are completed. Payment remains pending until manual verification.</p>
-</form>
-<aside class="payment-card" id="payment-card">
-<div class="payment-card-head"><span class="eyebrow">UPI PAYMENT</span><h3>Payment details</h3><p>Pay the displayed package amount using PhonePe, Google Pay or another UPI app.</p></div>
-<div class="payment-qr-wrap"><img id="payment-qr" alt="Digital World UPI payment QR" width="210" height="210" hidden><span id="payment-amount">Select a package to see the amount</span></div>
-<div class="payment-payee">Payee: <strong>ANJARA RAKESHBHAI PALJIBHAI</strong></div>
-<div class="payment-upi">UPI ID: <strong>9712424041@ybl</strong><button type="button" id="copy-upi">Copy UPI ID</button></div>
-<div class="payment-fields">
-<label>UPI UTR / Transaction Reference<input name="utr_reference" id="utr-reference" form="order-form" required minlength="8" maxlength="64" autocomplete="off" placeholder="Enter 8–64 character UTR"></label>
-<label>Payment reference details<input name="reference_details" id="reference-details" form="order-form" required minlength="4" maxlength="500" autocomplete="off" placeholder="Payer name, payment time and UPI app / bank"></label>
 </div>
-<p class="payment-warning">Important: entering a UTR does not mean payment is verified. Admin will manually match it with the actual bank / PhonePe credit.</p>
-</aside>
+<button type="submit" id="submit" disabled>Submit service request</button>
+<p class="form-foot">Your request and payment reference are submitted together. Payment remains pending until manual verification.</p>
+</form>
 </div>
 </section>
 <footer>Digital World · Bhavnagar, Gujarat · <a href="tel:+919712424041">+91 97124 24041</a> · <a href="mailto:digitalworldrpa@gmail.com">digitalworldrpa@gmail.com</a></footer>
