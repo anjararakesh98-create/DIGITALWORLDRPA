@@ -157,7 +157,7 @@
       notice.textContent="This package needs a confirmed custom quote before payment. Please contact Digital World first.";
       return;
     }
-    submitButton.disabled=true; submitButton.textContent="Submitting order and payment reference…";
+    submitButton.disabled=true; submitButton.textContent="Booking your order…";
     try {
       const {data:result,error}=await client.rpc("submit_public_service_order",{
         p_customer_name:payload.customer_name.trim(),
@@ -180,7 +180,7 @@
     } catch(error) {
       notice.textContent="We could not submit the order and payment reference together. Please check the UTR details or call +91 97124 24041.";
       console.error("Order / payment submission:",error);
-    } finally {submitButton.textContent="Submit service request";syncSubmitState();}
+    } finally {submitButton.textContent="Book Order";syncSubmitState();}
   });
   init();
 })();
