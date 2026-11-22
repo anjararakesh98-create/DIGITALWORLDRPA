@@ -61,7 +61,7 @@
           const badge = document.createElement("span"); badge.className = "recommended-badge"; badge.textContent = "Recommended"; title.append(badge);
         }
         card.append(title);
-        const price = document.createElement("div"); price.className = "featured-price"; price.textContent = money(pkg.price_inr) + '<'.replace("<",""); 
+        const price = document.createElement("div"); price.className = "featured-price"; price.textContent = money(pkg.price_inr); 
         const period = document.createElement("span"); period.textContent = " / month"; price.append(period); card.append(price);
         const desc = document.createElement("p"); desc.className = "featured-description"; desc.textContent = pkg.description || "A social media package tailored to your monthly requirements."; card.append(desc);
         const button = document.createElement("button"); button.className = "choose"; button.type = "button"; button.textContent = "Choose package";
