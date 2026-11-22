@@ -1,0 +1,50 @@
+name: Service Store checks
+
+on:
+  pull_request:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  static-checks:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Set up Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - name: Check JavaScript syntax
+        run: |
+          node --check js/service-store.js
+          node --check js/admin.js
+      - name: Check required pages and local assets
+        run: |
+          python - <<'PY'
+          from html.parser import HTMLParser
+          from pathlib import Path
+          class Checker(HTMLParser):
+              def __init__(self):
+                  super().__init__()
+                  self.refs = []
+              def handle_starttag(self, tag, attrs):
+                  attrs = dict(attrs)
+                  for key in ("src", "href"):
+                      value = attrs.get(key, "")
+                      if value and not value.startswith(("http://", "https://", "mailto:", "tel:", "#", "data:")):
+                          self.refs.append(value.split("#", 1)[0].split("?", 1)[0])
+          for page in ("index.html", "store.html", "admin.html"):
+              path = Path(page)
+              assert path.is_file(), f"Missing page: {page}"
+              parser = Checker()
+              parser.feed(path.read_text(encoding="utf-8"))
+              for ref in parser.refs:
+                  if not ref or ref.startswith(("javascript:", "mailto:", "tel:")):
+                      continue
+                  assert Path(ref).is_file(), f"{page} references missing local asset: {ref}"
+          print("Required pages and local references are present.")
+          PY
