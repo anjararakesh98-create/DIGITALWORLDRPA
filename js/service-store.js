@@ -18,7 +18,8 @@
     if (!link) return;
     const href = (link.getAttribute("href") || "").trim();
     let method = "";
-    if (/^https?:\\/\\/(?:www\\.)?wa\\.me\\//i.test(href) || /^https?:\\/\\/(?:api\\.)?whatsapp\\.com\\//i.test(href)) method = "whatsapp";
+    const lowerHref = href.toLowerCase();
+    if (lowerHref.startsWith("https://wa.me/") || lowerHref.startsWith("http://wa.me/") || lowerHref.startsWith("https://www.wa.me/") || lowerHref.startsWith("https://whatsapp.com/") || lowerHref.startsWith("https://api.whatsapp.com/")) method = "whatsapp";
     else if (/^tel:/i.test(href)) method = "phone";
     else if (/^mailto:/i.test(href)) method = "email";
     if (method) trackEvent("contact_click", {contact_method: method, link_url: href});
