@@ -66,7 +66,7 @@
     const heading = document.createElement("h2"); heading.textContent = "Complete your UPI payment"; panel.append(heading);
     const intro = document.createElement("p"); intro.textContent = "Scan this QR using PhonePe, Google Pay or another UPI app. Verify the payee name before paying."; panel.append(intro);
     const qr = document.createElement("img"); qr.alt = "UPI payment QR for Digital World order"; qr.width=240; qr.height=240; qr.loading="lazy";
-    const upi = "upi://pay?pa="+encodeURIComponent(UPI_ID)+"&pn="+encodeURIComponent(PAYEE)+"&am="+encodeURIComponent((amount/100).toFixed(2))+"&cu=INR&tn="+encodeURIComponent("Digital World "+orderId);
+    const upi = "upi://pay?pa="+encodeURIComponent(UPI_ID)+"&pn="+encodeURIComponent(PAYEE)+"&am="+encodeURIComponent(Number(amount).toFixed(2))+"&cu=INR&tn="+encodeURIComponent("Digital World "+orderId);
     qr.src = "https://api.qrserver.com/v1/create-qr-code/?size=240x240&data="+encodeURIComponent(upi);
     panel.append(qr);
     const payee = document.createElement("p"); payee.textContent = "Payee: "+PAYEE; panel.append(payee);
