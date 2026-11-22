@@ -22,6 +22,46 @@ async function load(){
  card.innerHTML='<div class="order-title"><div><strong>'+esc(o.order_number||o.id)+'</strong><span>'+esc(new Date(o.created_at).toLocaleString("en-IN"))+'</span></div><b class="status">'+esc(o.payment_status)+'</b></div><div class="order-grid"><div><small>Customer</small><b>'+esc(o.customer_name)+'</b><span>'+esc(o.customer_phone)+' · '+esc(o.customer_email)+'</span></div><div><small>Service / package</small><b>'+esc((o.service_snapshot?.service_name||'Service')+' · '+(o.service_snapshot?.package_name||'Custom quote'))+'</b></div><div><small>Amount due</small><b>'+esc(rupees(o.amount_due_inr??o.quoted_amount_inr))+'</b></div><div><small>Order status</small><b>'+esc(o.status)+'</b></div><div><small>Business</small><b>'+esc(o.business_name||"—")+'</b></div></div><p class="requirements">'+esc(o.requirements||"No additional requirements.")+'</p>';
  if(o.package_access_grants?.length){const grant=o.package_access_grants[0];card.innerHTML+='<div class="payment-details"><b>Package access · '+esc(grant.access_status)+'</b><span>Granted: '+esc(new Date(grant.granted_at).toLocaleString("en-IN"))+'</span></div>'; }
  if(pay){card.innerHTML+='<div class="payment-details"><b>UPI payment · '+esc(pay.status)+' · '+esc(rupees(pay.amount_inr))+'</b><span>UTR: '+esc(pay.utr_reference||"Not submitted")+'</span><span>Submitted: '+esc(pay.submitted_at?new Date(pay.submitted_at).toLocaleString("en-IN"):"—")+'</span><span>UPI ID: '+esc(pay.upi_id||"—")+'</span></div>';}
+ if(o.payment_status!=="paid"&&["awaiting_quote","quoted"].includes(o.status)){
+ const quoteBox=document.createElement("div");quoteBox.className="payment-details";
+ const quoteLabel=document.createElement("label");quoteLabel.textContent="Set / update quote (INR)";
+ const quoteInput=document.createElement("input");quoteInput.type="number";quoteInput.min="1";quoteInput.step="1";quoteInput.required=true;quoteInput.placeholder="Enter final agreed amount";quoteInput.value=o.quoted_amount_inr??"";
+ quoteLabel.append(quoteInput);
+ const quoteNote=document.createElement("input");quoteNote.placeholder="Optional scope / quote note";quoteNote.className="verify-note";
+ const quoteButton=document.createElement("button");quoteButton.textContent="Save quote";
+ quoteButton.addEventListener("click",async()=>{
+  const amount=Number(quoteInput.value);
+  if(!Number.isSafeInteger(amount)||amount<=0){adminMsg.textContent="Enter a valid whole-rupee amount.";return;}
+  if(!confirm("Save quote of "+rupees(amount)+" for "+(o.order_number||o.id)+"? This does not mark the order paid."))return;
+  quoteButton.disabled=true;adminMsg.textContent="Saving quote…";
+  const {error}=await db.rpc("admin_set_order_quote",{p_order_id:o.id,p_amount_inr:amount,p_note:quoteNote.value||null});
+  if(error){adminMsg.textContent="Could not save quote: "+error.message;quoteButton.disabled=false;return;}
+  await load();
+ });
+ quoteBox.append(quoteLabel,quoteNote,quoteButton);
+ if(o.amount_due_inr!=null){
+  const copy=document.createElement("button");copy.className="secondary";copy.textContent="Copy quote & UPI instructions";
+  copy.addEventListener("click",async()=>{
+   const message="Digital World quote for order "+(o.order_number||o.id)+": "+rupees(o.amount_due_inr)+". Pay to UPI ID 9712424041@ybl (Payee: ANJARA RAKESHBHAI PALJIBHAI). After payment, WhatsApp the UTR / transaction reference with this order number. Work/payment confirmation happens only after our bank / PhonePe credit is manually verified.";
+   try{await navigator.clipboard.writeText(message);adminMsg.textContent="Quote and UPI instructions copied. Send them to the customer yourself.";}catch{adminMsg.textContent=message;}
+  });
+  quoteBox.append(copy);
+  const utrLabel=document.createElement("label");utrLabel.textContent="Customer UTR received by WhatsApp";
+  const utrInput=document.createElement("input");utrInput.minLength=8;utrInput.maxLength=64;utrInput.placeholder="Enter exact UTR / transaction reference";utrLabel.append(utrInput);
+  const record=document.createElement("button");record.textContent="Record customer UTR";
+  record.addEventListener("click",async()=>{
+   const utr=utrInput.value.trim();
+   if(utr.length<8||utr.length>64){adminMsg.textContent="UTR must be 8–64 characters.";return;}
+   if(!confirm("Record this customer-provided UTR as pending verification? It will NOT mark the order paid."))return;
+   record.disabled=true;
+   const {error}=await db.from("payment_transactions").insert({order_id:o.id,provider:"phonepe_upi",amount_inr:o.amount_due_inr,currency:"INR",status:"pending_verification",upi_id:"9712424041@ybl",utr_reference:utr,submitted_at:new Date().toISOString()});
+   if(error){adminMsg.textContent="Could not record UTR: "+error.message;record.disabled=false;return;}
+   await load();
+  });
+  quoteBox.append(utrLabel,record);
+ }
+ card.append(quoteBox);
+ }
  if(pay&&pay.status==="pending_verification"&&o.payment_status!=="paid"){
  const note=document.createElement("input");note.placeholder="Optional verification note";note.className="verify-note";
  const actions=document.createElement("div");actions.className="verify-actions";
