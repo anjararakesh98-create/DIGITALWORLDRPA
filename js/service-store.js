@@ -10,6 +10,19 @@
   const packageSelect = document.getElementById("package-select");
   const form = document.getElementById("order-form");
   let services = [];
+  function trackEvent(name, params = {}) {
+    if (typeof window.gtag === "function") window.gtag("event", name, params);
+  }
+  document.addEventListener("click", event => {
+    const link = event.target.closest("a[href]");
+    if (!link) return;
+    const href = (link.getAttribute("href") || "").trim();
+    let method = "";
+    if (/^https?:\\/\\/(?:www\\.)?wa\\.me\\//i.test(href) || /^https?:\\/\\/(?:api\\.)?whatsapp\\.com\\//i.test(href)) method = "whatsapp";
+    else if (/^tel:/i.test(href)) method = "phone";
+    else if (/^mailto:/i.test(href)) method = "email";
+    if (method) trackEvent("contact_click", {contact_method: method, link_url: href});
+  });
   const money = n => new Intl.NumberFormat("en-IN",{style:"currency",currency:"INR",maximumFractionDigits:0}).format(n);
   function selectPackage(serviceId, packageId) {
     serviceSelect.value = serviceId; populatePackages(); packageSelect.value = packageId;
@@ -88,6 +101,7 @@
       try {
         const {error}=await client.from("payment_transactions").insert({order_id:orderId,provider:"phonepe_upi",amount_inr:amount,status:"pending_verification",currency:"INR",upi_id:UPI_ID,utr_reference:utr,submitted_at:new Date().toISOString()});
         if(error) throw error;
+        trackEvent("payment_reference_submitted", {currency: "INR", value: Number(amount), payment_method: "upi"});
         status.textContent="Reference received. The order is still unpaid until Digital World verifies the payment.";
         input.disabled=true; submit.textContent="Reference submitted";
       } catch(err) { status.textContent="Could not submit. Check the UTR and contact +91 97124 24041."; console.error("UTR submission:",err); submit.disabled=false; }
@@ -107,6 +121,7 @@
       const orderId=crypto.randomUUID();
       const {error}=await client.from("orders").insert({id:orderId,customer_name:payload.customer_name.trim(),customer_email:payload.customer_email.trim(),customer_phone:payload.customer_phone.trim(),business_name:payload.business_name.trim()||null,service_id:payload.service_id,package_id:payload.package_id,requirements:payload.requirements.trim()||null});
       if(error) throw error;
+      trackEvent("generate_lead", {currency: "INR", value: Number(pkg.price_inr || 0), service_name: service.name, package_name: pkg.name});
       form.reset(); packageSelect.innerHTML='<option value="">Choose a package</option>'; packageSelect.disabled=true;
       notice.textContent="Your order request has been received. Order reference: "+orderId+".";
       if(service.pricing_type==="quote" || pkg.price_inr==null || Number(pkg.price_inr)<=0) {
