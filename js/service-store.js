@@ -40,12 +40,13 @@
     const service = services.find(s => s.id === serviceSelect.value);
     const pkg = service?.service_packages.find(p => p.id === packageSelect.value && p.is_active);
     const price = pkg && service?.pricing_type !== "quote" ? Number(pkg.price_inr) : 0;
+    paymentQr.src = "images/digital-world-phonepe-qr.png";
+    paymentQr.hidden = false;
     if (price > 0) {
-      const upi = "upi://pay?pa="+encodeURIComponent(UPI_ID)+"&pn="+encodeURIComponent(PAYEE)+"&am="+encodeURIComponent(price.toFixed(2))+"&cu=INR&tn="+encodeURIComponent("Digital World "+(pkg.name||"Service"));
-      paymentQr.src = "https://api.qrserver.com/v1/create-qr-code/?size=210x210&data="+encodeURIComponent(upi);
-      paymentQr.hidden = false;
-      paymentAmount.textContent = "Pay "+money(price);
-    } else { paymentQr.removeAttribute("src"); paymentQr.hidden = true; paymentAmount.textContent = pkg ? "Custom quote: payment after quote confirmation" : "Select a package to see the amount"; }
+      paymentAmount.textContent = "Pay "+money(price)+" using the QR below";
+    } else {
+      paymentAmount.textContent = pkg ? "Custom quote: payment after quote confirmation" : "Select a package to see the amount";
+    }
     syncSubmitState();
   }
   function syncSubmitState() {
@@ -174,7 +175,7 @@
       trackEvent("generate_lead", {currency:"INR",value:Number(result.amount_due_inr||0),service_name:service.name,package_name:pkg.name});
       trackEvent("payment_reference_submitted",{currency:"INR",value:Number(result.amount_due_inr||0),payment_method:"upi"});
       form.reset(); packageSelect.innerHTML='<option value="">Choose a package</option>'; packageSelect.disabled=true;
-      paymentQr.removeAttribute("src"); paymentQr.hidden=true; paymentAmount.textContent="Select a package to see the amount";
+      paymentAmount.textContent="Select a package to see the amount";
       notice.textContent="Your service request and UPI reference have been received. Order: "+result.order_number+". Payment status: pending manual verification.";
       notice.scrollIntoView({behavior:"smooth",block:"center"});
     } catch(error) {
