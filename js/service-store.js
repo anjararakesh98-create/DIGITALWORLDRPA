@@ -33,9 +33,28 @@
   const money = n => new Intl.NumberFormat("en-IN",{style:"currency",currency:"INR",maximumFractionDigits:0}).format(n);
   function selectPackage(serviceId, packageId) {
     serviceSelect.value = serviceId; populatePackages(); packageSelect.value = packageId;
-    updateCheckout();\n    document.getElementById("order").scrollIntoView({behavior:"smooth",block:"start"});
+    updateCheckout();
+    document.getElementById("order").scrollIntoView({behavior:"smooth",block:"start"});
   }
-  function updateCheckout() {\n    const service = services.find(s => s.id === serviceSelect.value);\n    const pkg = service?.service_packages.find(p => p.id === packageSelect.value && p.is_active);\n    const price = pkg && service?.pricing_type !== "quote" ? Number(pkg.price_inr) : 0;\n    if (price > 0) {\n      const upi = "upi://pay?pa="+encodeURIComponent(UPI_ID)+"&pn="+encodeURIComponent(PAYEE)+"&am="+encodeURIComponent(price.toFixed(2))+"&cu=INR&tn="+encodeURIComponent("Digital World "+(pkg.name||"Service"));\n      paymentQr.src = "https://api.qrserver.com/v1/create-qr-code/?size=210x210&data="+encodeURIComponent(upi);\n      paymentQr.hidden = false;\n      paymentAmount.textContent = "Pay "+money(price);\n    } else { paymentQr.removeAttribute("src"); paymentQr.hidden = true; paymentAmount.textContent = pkg ? "Custom quote: payment after quote confirmation" : "Select a package to see the amount"; }\n    syncSubmitState();\n  }\n  function syncSubmitState() {\n    const service = services.find(s => s.id === serviceSelect.value);\n    const pkg = service?.service_packages.find(p => p.id === packageSelect.value && p.is_active);\n    const payable = !!pkg && service?.pricing_type !== "quote" && Number(pkg.price_inr) > 0;\n    submitButton.disabled = !(payable && form.checkValidity());\n  }\n  function populatePackages() {
+  function updateCheckout() {
+    const service = services.find(s => s.id === serviceSelect.value);
+    const pkg = service?.service_packages.find(p => p.id === packageSelect.value && p.is_active);
+    const price = pkg && service?.pricing_type !== "quote" ? Number(pkg.price_inr) : 0;
+    if (price > 0) {
+      const upi = "upi://pay?pa="+encodeURIComponent(UPI_ID)+"&pn="+encodeURIComponent(PAYEE)+"&am="+encodeURIComponent(price.toFixed(2))+"&cu=INR&tn="+encodeURIComponent("Digital World "+(pkg.name||"Service"));
+      paymentQr.src = "https://api.qrserver.com/v1/create-qr-code/?size=210x210&data="+encodeURIComponent(upi);
+      paymentQr.hidden = false;
+      paymentAmount.textContent = "Pay "+money(price);
+    } else { paymentQr.removeAttribute("src"); paymentQr.hidden = true; paymentAmount.textContent = pkg ? "Custom quote: payment after quote confirmation" : "Select a package to see the amount"; }
+    syncSubmitState();
+  }
+  function syncSubmitState() {
+    const service = services.find(s => s.id === serviceSelect.value);
+    const pkg = service?.service_packages.find(p => p.id === packageSelect.value && p.is_active);
+    const payable = !!pkg && service?.pricing_type !== "quote" && Number(pkg.price_inr) > 0;
+    submitButton.disabled = !(payable && form.checkValidity());
+  }
+  function populatePackages() {
     const service = services.find(s => s.id === serviceSelect.value);
     packageSelect.innerHTML = '<option value="">Choose a package</option>'; packageSelect.disabled = !service;
     (service?.service_packages || []).filter(p => p.is_active).forEach(p => {
@@ -43,6 +62,7 @@
       option.textContent = p.name + " — " + (service.pricing_type === "quote" ? "Custom quote" : money(p.price_inr) + (p.billing_period === "monthly" ? " / month" : ""));
       packageSelect.append(option);
     });
+    updateCheckout();
   }
   serviceSelect.addEventListener("change", populatePackages);
   function render() {
