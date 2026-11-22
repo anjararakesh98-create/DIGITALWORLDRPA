@@ -65,6 +65,9 @@
     updateCheckout();
   }
   serviceSelect.addEventListener("change", populatePackages);
+  packageSelect.addEventListener("change", updateCheckout);
+  utrInput.addEventListener("input", syncSubmitState);
+  referenceDetailsInput.addEventListener("input", syncSubmitState);
   function render() {
     catalog.innerHTML = ""; featured.innerHTML = "";
     serviceSelect.innerHTML = '<option value="">Choose a service</option>';
