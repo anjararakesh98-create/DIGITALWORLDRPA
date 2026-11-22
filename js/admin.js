@@ -27,18 +27,17 @@ async function load(){
  const quoteLabel=document.createElement("label");quoteLabel.textContent="Set / update quote (INR)";
  const quoteInput=document.createElement("input");quoteInput.type="number";quoteInput.min="1";quoteInput.step="1";quoteInput.required=true;quoteInput.placeholder="Enter final agreed amount";quoteInput.value=o.quoted_amount_inr??"";
  quoteLabel.append(quoteInput);
- const quoteNote=document.createElement("input");quoteNote.placeholder="Optional scope / quote note";quoteNote.className="verify-note";
  const quoteButton=document.createElement("button");quoteButton.textContent="Save quote";
  quoteButton.addEventListener("click",async()=>{
   const amount=Number(quoteInput.value);
   if(!Number.isSafeInteger(amount)||amount<=0){adminMsg.textContent="Enter a valid whole-rupee amount.";return;}
   if(!confirm("Save quote of "+rupees(amount)+" for "+(o.order_number||o.id)+"? This does not mark the order paid."))return;
   quoteButton.disabled=true;adminMsg.textContent="Saving quote…";
-  const {error}=await db.rpc("admin_set_order_quote",{p_order_id:o.id,p_amount_inr:amount,p_note:quoteNote.value||null});
+  const {error}=await db.rpc("admin_set_order_quote",{p_order_id:o.id,p_amount_inr:amount,p_note:null});
   if(error){adminMsg.textContent="Could not save quote: "+error.message;quoteButton.disabled=false;return;}
   await load();
  });
- quoteBox.append(quoteLabel,quoteNote,quoteButton);
+ quoteBox.append(quoteLabel,quoteButton);
  if(o.amount_due_inr!=null){
   const copy=document.createElement("button");copy.className="secondary";copy.textContent="Copy quote & UPI instructions";
   copy.addEventListener("click",async()=>{
