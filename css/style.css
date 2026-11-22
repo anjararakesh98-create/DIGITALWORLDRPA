@@ -519,3 +519,6 @@ button,input,select,textarea{font:inherit}
 /* Maintain readable warm accents on the dark About section. */
 .dw-eyebrow-light{color:#ffd08f}
 .dw-about-section h2 em{color:#ffb45c}
+
+/* Selected Work → Service Store bridge */
+.dw-store-cta{display:flex;align-items:center;justify-content:space-between;gap:28px;margin-top:30px;padding:27px 30px;border:1px solid #dce6f3;border-radius:13px;background:linear-gradient(105deg,#fff 0%,#eef5ff 100%);box-shadow:0 14px 38px #082d6b0b}.dw-store-cta h3{margin:10px 0 7px;color:#082d6b;font:800 clamp(21px,2.8vw,30px)/1.15 "DM Sans",sans-serif;letter-spacing:-.04em}.dw-store-cta h3 em{font-style:normal;color:#ff8a00}.dw-store-cta p{margin:0;color:#687991;font-size:12px;line-height:1.7}.dw-store-cta>.dw-button{flex-shrink:0}@media(max-width:700px){.dw-store-cta{align-items:flex-start;flex-direction:column;padding:22px}.dw-store-cta>.dw-button{width:100%}}
