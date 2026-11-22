@@ -53,11 +53,21 @@
       const list = document.createElement("div"); list.className = "packages";
       service.service_packages.filter(p=>p.is_active).forEach(pkg => {
         const row = document.createElement("div"); row.className = "package";
+        const info = document.createElement("div"); info.className = "package-info";
+        const title = document.createElement("div"); title.className = "package-title";
         const name = document.createElement("span"); name.textContent = pkg.name + (pkg.billing_period === "monthly" ? " · monthly" : "");
+        title.append(name);
+        if (pkg.slug === "standard") {
+          const badge = document.createElement("span"); badge.className = "recommended-badge"; badge.textContent = "Recommended"; title.append(badge);
+        }
+        info.append(title);
+        if (pkg.description) {
+          const packageDesc = document.createElement("p"); packageDesc.className = "package-description"; packageDesc.textContent = pkg.description; info.append(packageDesc);
+        }
         const cost = document.createElement("strong"); cost.textContent = service.pricing_type === "quote" ? "Quote" : money(pkg.price_inr);
-        row.append(name,cost);
         const button = document.createElement("button"); button.className = "choose"; button.type = "button"; button.textContent = "Choose";
-        button.addEventListener("click",()=>selectPackage(service.id,pkg.id)); row.append(button); list.append(row);
+        button.addEventListener("click",()=>selectPackage(service.id,pkg.id));
+        row.append(info,cost,button); list.append(row);
       });
       card.append(list); catalog.append(card);
     });
