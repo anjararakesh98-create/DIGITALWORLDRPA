@@ -35,10 +35,8 @@ async function load(){
 async function verify(order,pay,note){
  if(!confirm("Confirm only after independently seeing the matching credit in PhonePe / bank statement. Mark this order PAID?"))return;
  adminMsg.textContent="Saving verification…";
- const {error:e}=await db.from("payment_transactions").update({status:"verified",verified_at:new Date().toISOString(),verified_by:(await db.auth.getUser()).data.user.id,verification_note:note||null}).eq("id",pay.id).eq("status","pending_verification");
- if(e){adminMsg.textContent="Payment verification failed. Check admin permissions.";return;}
- const {error}=await db.from("orders").update({payment_status:"paid",status:"paid"}).eq("id",order.id).eq("payment_status","unpaid");
- if(error){adminMsg.textContent="Payment record verified, but order update failed. Contact support immediately.";return;}
+ const {error}=await db.rpc("admin_verify_phonepe_payment",{p_payment_id:pay.id,p_note:note||null});
+ if(error){adminMsg.textContent="Payment verification failed: "+error.message;return;}
  await load();
 }
 async function reject(pay,note){
