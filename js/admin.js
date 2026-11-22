@@ -7,7 +7,7 @@ const rupees=n=>n==null?"Quote required":new Intl.NumberFormat("en-IN",{style:"c
 async function access(){
  const {data:{user},error}=await db.auth.getUser(); if(error||!user){login.hidden=false;dash.hidden=true;return;}
  const {data:profile,error:e}=await db.from("user_profiles").select("*").eq("user_id",user.id).maybeSingle();
- if(e||!profile||profile.role!=="admin"){await db.auth.signOut();login.hidden=false;dash.hidden=true;msg.textContent="This account is not authorised. Admin role is required.";return;}
+ if(e||!profile||!["admin","super_admin"].includes(profile.role)){await db.auth.signOut();login.hidden=false;dash.hidden=true;msg.textContent="This account is not authorised. Admin role is required.";return;}
  login.hidden=true;dash.hidden=false;await load();
 }
 async function load(){
