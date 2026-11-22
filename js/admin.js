@@ -12,7 +12,7 @@ async function access(){
 }
 async function load(){
  adminMsg.textContent="Loading…";
- const {data,error}=await db.from("orders").select("id,order_number,customer_name,customer_email,customer_phone,business_name,requirements,service_snapshot,amount_due_inr,quoted_amount_inr,status,payment_status,created_at,payment_transactions(id,provider,amount_inr,status,utr_reference,upi_id,submitted_at,verified_at,verification_note),package_access_grants(id,access_status,granted_at)").order("created_at",{ascending:false}).limit(100);
+ const {data,error}=await db.from("orders").select("id,order_number,customer_name,customer_email,customer_phone,business_name,requirements,service_snapshot,amount_due_inr,quoted_amount_inr,status,payment_status,created_at,payment_transactions(id,provider,amount_inr,status,utr_reference,reference_details,upi_id,submitted_at,verified_at,verification_note),package_access_grants(id,access_status,granted_at)").order("created_at",{ascending:false}).limit(100);
  if(error){adminMsg.textContent="Could not load orders. Check admin database permissions.";return;}
  list.innerHTML="";
  if(!data?.length){list.textContent="No orders yet.";adminMsg.textContent="";return;}
@@ -21,7 +21,7 @@ async function load(){
  const card=document.createElement("article");card.className="order-card";
  card.innerHTML='<div class="order-title"><div><strong>'+esc(o.order_number||o.id)+'</strong><span>'+esc(new Date(o.created_at).toLocaleString("en-IN"))+'</span></div><b class="status">'+esc(o.payment_status)+'</b></div><div class="order-grid"><div><small>Customer</small><b>'+esc(o.customer_name)+'</b><span>'+esc(o.customer_phone)+' · '+esc(o.customer_email)+'</span></div><div><small>Service / package</small><b>'+esc((o.service_snapshot?.service_name||'Service')+' · '+(o.service_snapshot?.package_name||'Custom quote'))+'</b></div><div><small>Amount due</small><b>'+esc(rupees(o.amount_due_inr??o.quoted_amount_inr))+'</b></div><div><small>Order status</small><b>'+esc(o.status)+'</b></div><div><small>Business</small><b>'+esc(o.business_name||"—")+'</b></div></div><p class="requirements">'+esc(o.requirements||"No additional requirements.")+'</p>';
  if(o.package_access_grants?.length){const grant=o.package_access_grants[0];card.innerHTML+='<div class="payment-details"><b>Package access · '+esc(grant.access_status)+'</b><span>Granted: '+esc(new Date(grant.granted_at).toLocaleString("en-IN"))+'</span></div>'; }
- if(pay){card.innerHTML+='<div class="payment-details"><b>UPI payment · '+esc(pay.status)+' · '+esc(rupees(pay.amount_inr))+'</b><span>UTR: '+esc(pay.utr_reference||"Not submitted")+'</span><span>Submitted: '+esc(pay.submitted_at?new Date(pay.submitted_at).toLocaleString("en-IN"):"—")+'</span><span>UPI ID: '+esc(pay.upi_id||"—")+'</span></div>';}
+ if(pay){card.innerHTML+='<div class="payment-details"><b>UPI payment · '+esc(pay.status)+' · '+esc(rupees(pay.amount_inr))+'</b><span>UTR: '+esc(pay.utr_reference||"Not submitted")+'</span><span>Reference details: '+esc(pay.reference_details||"—")+'</span><span>Submitted: '+esc(pay.submitted_at?new Date(pay.submitted_at).toLocaleString("en-IN"):"—")+'</span><span>UPI ID: '+esc(pay.upi_id||"—")+'</span></div>';}
  if(o.payment_status!=="paid"&&["awaiting_quote","quoted"].includes(o.status)){
  const quoteBox=document.createElement("div");quoteBox.className="payment-details";
  const quoteLabel=document.createElement("label");quoteLabel.textContent="Set / update quote (INR)";
