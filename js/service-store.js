@@ -103,6 +103,16 @@
       services = (data || []).map(s=>({...s,service_packages:(s.service_packages||[]).sort((a,b)=>a.sort_order-b.sort_order)}));
       if(!services.length) throw new Error("No active services are currently published.");
       render();
+      const requestedService = new URLSearchParams(window.location.search).get("service");
+      if (requestedService) {
+        const matchedService = services.find(item => item.slug === requestedService);
+        if (matchedService) {
+          serviceSelect.value = matchedService.id;
+          populatePackages();
+          const orderSection = document.getElementById("order");
+          if (orderSection) setTimeout(() => orderSection.scrollIntoView({behavior:"smooth",block:"start"}), 120);
+        }
+      }
     } catch(error) {
       notice.textContent = "The service catalogue could not load. Please contact Digital World on +91 97124 24041.";
       console.error("Service catalogue:",error);
