@@ -529,3 +529,10 @@ a.dw-service-card:focus-visible{outline:3px solid var(--dw-orange);outline-offse
 .dw-card-action{position:absolute;left:23px;bottom:15px;font-size:11px;font-weight:800;color:var(--dw-blue);opacity:0;transform:translateY(4px);transition:opacity .2s,transform .2s}
 .dw-service-card:hover .dw-card-action,.dw-service-card:focus-visible .dw-card-action{opacity:1;transform:translateY(0)}
 @media(hover:none){.dw-card-action{opacity:1;transform:none}}
+
+
+/* Highlight the Store destination in the main navigation */
+.dw-nav-links>a.dw-nav-store{display:inline-flex;align-items:center;justify-content:center;padding:10px 18px!important;border:1px solid #f4c542;border-radius:999px;background:#fff2bd;color:#082d6b!important;font-weight:800!important;box-shadow:0 5px 16px #d99b1826;transition:background .2s ease,color .2s ease,transform .2s ease,box-shadow .2s ease}
+.dw-nav-links>a.dw-nav-store:hover{background:#ffd54a;color:#082d6b!important;transform:translateY(-2px);box-shadow:0 8px 20px #d99b1840}
+.dw-nav-links>a.dw-nav-store::after{display:none!important}
+@media(max-width:900px){.dw-nav-links>a.dw-nav-store{align-self:flex-start;margin:8px 0 4px;padding:10px 20px!important}}
