@@ -6,6 +6,7 @@
   const client = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
   const notice = document.getElementById("notice");
   const catalog = document.getElementById("catalog");
+  const featured = document.getElementById("featured-packages");
   const serviceSelect = document.getElementById("service-select");
   const packageSelect = document.getElementById("package-select");
   const form = document.getElementById("order-form");
@@ -40,10 +41,38 @@
   }
   serviceSelect.addEventListener("change", populatePackages);
   function render() {
-    catalog.innerHTML = ""; serviceSelect.innerHTML = '<option value="">Choose a service</option>';
+    catalog.innerHTML = ""; featured.innerHTML = "";
+    serviceSelect.innerHTML = '<option value="">Choose a service</option>';
     services.forEach(service => {
       const opt = document.createElement("option"); opt.value = service.id; opt.textContent = service.name; serviceSelect.append(opt);
-      const card = document.createElement("article"); card.className = "service";
+    });
+
+    const social = services.find(s => s.slug === "social-media-management" || /social media management/i.test(s.name));
+    if (social) {
+      const heading = document.createElement("div"); heading.className = "featured-heading";
+      heading.innerHTML = '<span class="eyebrow">MOST POPULAR SERVICE</span><h2>Social Media Management</h2><p>Choose the monthly plan that matches your business goals.</p>';
+      featured.append(heading);
+      const grid = document.createElement("div"); grid.className = "featured-grid";
+      social.service_packages.filter(p=>p.is_active).forEach(pkg => {
+        const card = document.createElement("article"); card.className = "featured-package" + (pkg.slug === "standard" ? " is-recommended" : "");
+        const title = document.createElement("div"); title.className = "featured-title";
+        const name = document.createElement("h3"); name.textContent = pkg.name; title.append(name);
+        if (pkg.slug === "standard") {
+          const badge = document.createElement("span"); badge.className = "recommended-badge"; badge.textContent = "Recommended"; title.append(badge);
+        }
+        card.append(title);
+        const price = document.createElement("div"); price.className = "featured-price"; price.textContent = money(pkg.price_inr) + '<'.replace("<",""); 
+        const period = document.createElement("span"); period.textContent = " / month"; price.append(period); card.append(price);
+        const desc = document.createElement("p"); desc.className = "featured-description"; desc.textContent = pkg.description || "A social media package tailored to your monthly requirements."; card.append(desc);
+        const button = document.createElement("button"); button.className = "choose"; button.type = "button"; button.textContent = "Choose package";
+        button.addEventListener("click",()=>selectPackage(social.id,pkg.id)); card.append(button);
+        grid.append(card);
+      });
+      featured.append(grid);
+    }
+
+    services.filter(s => s !== social).forEach(service => {
+      const card = document.createElement("article"); card.className = "service service-compact";
       const heading = document.createElement("h3"); heading.textContent = service.name; card.append(heading);
       const desc = document.createElement("p"); desc.textContent = service.description || "A Digital World service for small and growing businesses."; card.append(desc);
       const price = document.createElement("div"); price.className = "price";
@@ -55,15 +84,9 @@
         const row = document.createElement("div"); row.className = "package";
         const info = document.createElement("div"); info.className = "package-info";
         const title = document.createElement("div"); title.className = "package-title";
-        const name = document.createElement("span"); name.textContent = pkg.name + (pkg.billing_period === "monthly" ? " · monthly" : "");
-        title.append(name);
-        if (pkg.slug === "standard") {
-          const badge = document.createElement("span"); badge.className = "recommended-badge"; badge.textContent = "Recommended"; title.append(badge);
-        }
+        const name = document.createElement("span"); name.textContent = pkg.name + (pkg.billing_period === "monthly" ? " · monthly" : ""); title.append(name);
         info.append(title);
-        if (pkg.description) {
-          const packageDesc = document.createElement("p"); packageDesc.className = "package-description"; packageDesc.textContent = pkg.description; info.append(packageDesc);
-        }
+        if (pkg.description) { const packageDesc = document.createElement("p"); packageDesc.className = "package-description"; packageDesc.textContent = pkg.description; info.append(packageDesc); }
         const cost = document.createElement("strong"); cost.textContent = service.pricing_type === "quote" ? "Quote" : money(pkg.price_inr);
         const button = document.createElement("button"); button.className = "choose"; button.type = "button"; button.textContent = "Choose";
         button.addEventListener("click",()=>selectPackage(service.id,pkg.id));
