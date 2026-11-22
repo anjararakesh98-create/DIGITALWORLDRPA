@@ -7,7 +7,7 @@ const rupees=n=>n==null?"Quote required":new Intl.NumberFormat("en-IN",{style:"c
 async function access(){
  const {data:{user},error}=await db.auth.getUser(); if(error||!user){login.hidden=false;dash.hidden=true;return;}
  const {data:profile,error:e}=await db.from("user_profiles").select("*").eq("user_id",user.id).maybeSingle();
- if(e||!profile){await db.auth.signOut();msg.textContent="This account is not authorised for the admin dashboard.";return;}
+ if(e||!profile||profile.role!=="admin"){await db.auth.signOut();login.hidden=false;dash.hidden=true;msg.textContent="This account is not authorised. Admin role is required.";return;}
  login.hidden=true;dash.hidden=false;await load();
 }
 async function load(){
@@ -37,7 +37,7 @@ async function verify(order,pay,note){
  adminMsg.textContent="Saving verification…";
  const {error:e}=await db.from("payment_transactions").update({status:"verified",verified_at:new Date().toISOString(),verified_by:(await db.auth.getUser()).data.user.id,verification_note:note||null}).eq("id",pay.id).eq("status","pending_verification");
  if(e){adminMsg.textContent="Payment verification failed. Check admin permissions.";return;}
- const {error}=await db.from("orders").update({payment_status:"paid",status:"confirmed"}).eq("id",order.id).eq("payment_status","unpaid");
+ const {error}=await db.from("orders").update({payment_status:"paid",status:"paid"}).eq("id",order.id).eq("payment_status","unpaid");
  if(error){adminMsg.textContent="Payment record verified, but order update failed. Contact support immediately.";return;}
  await load();
 }
