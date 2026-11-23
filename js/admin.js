@@ -113,7 +113,7 @@ async function showSection(section){
  title.textContent=titles[section]||"Admin Dashboard";
  if(section==="clients"){document.getElementById("clients-panel").hidden=false;await loadClients();return;}
  if(["store","services"].includes(section)){document.getElementById(section+"-panel").hidden=false;return;}
- if(section==="nfc"){document.getElementById("nfc-panel").hidden=false;await loadCards();return;}
+ if(section==="nfc"){document.getElementById("cards-panel").hidden=false;await loadCards();return;}
  if(["cards","card-payments","active-cards","trial-cards","expired-cards","without-nfc"].includes(section)){document.getElementById("cards-panel").hidden=false;await loadCards();return;}
  document.getElementById("orders-panel").hidden=false;await load();
 }
