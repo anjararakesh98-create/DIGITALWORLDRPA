@@ -957,3 +957,68 @@ header.dw-header .dw-nav-links>a.dw-nav-admin{
 @media(prefers-reduced-motion:reduce){
   header.dw-header .dw-nav-links,header.dw-header .dw-menu-backdrop{transition:none!important}
 }
+
+
+/* Digital World mobile drawer theme: white, navy, royal blue and orange */
+@media(max-width:680px){
+  header.dw-header .dw-mobile-menu-toggle{
+    background:#ffffff!important;
+    color:#082d6b!important;
+    border:1.5px solid #ff8a00!important;
+    border-radius:9px!important;
+    box-shadow:0 2px 8px rgba(8,45,107,.08),0 3px 8px rgba(255,138,0,.10)!important;
+    font-weight:850!important;
+  }
+  header.dw-header .dw-mobile-menu-toggle:hover,
+  header.dw-header .dw-mobile-menu-toggle:focus-visible{
+    background:#fff7ed!important;
+    border-color:#ff4d00!important;
+    color:#082d6b!important;
+  }
+  header.dw-header .dw-nav-links{
+    background:#ffffff!important;
+    border-left:2px solid #ff8a00!important;
+    box-shadow:-12px 0 34px rgba(8,45,107,.15)!important;
+  }
+  header.dw-header .dw-nav-links>a,
+  header.dw-header .dw-nav-links>a:not(.dw-nav-business-card),
+  header.dw-header .dw-nav-links>a.dw-nav-business-card,
+  header.dw-header .dw-nav-links>a.dw-nav-admin{
+    background:#ffffff!important;
+    color:#082d6b!important;
+    border:0!important;
+    border-bottom:1px solid rgba(8,45,107,.12)!important;
+    border-radius:0!important;
+    box-shadow:none!important;
+  }
+  header.dw-header .dw-nav-links>a:not(.dw-nav-business-card):hover,
+  header.dw-header .dw-nav-links>a:not(.dw-nav-business-card):focus-visible{
+    background:#fff4e8!important;
+    color:#ff4d00!important;
+    border-left:3px solid #ff8a00!important;
+    padding-left:12px!important;
+  }
+  header.dw-header .dw-nav-links>a.dw-nav-business-card{
+    background:#ffffff!important;
+    border:1px solid #ff8a00!important;
+    border-radius:9px!important;
+    box-shadow:0 2px 8px rgba(8,45,107,.07)!important;
+  }
+  header.dw-header .dw-nav-links>a.dw-nav-business-card .dw-nav-business-title{
+    color:#082d6b!important;
+  }
+  header.dw-header .dw-nav-links>a.dw-nav-business-card small{
+    color:#0756c8!important;
+  }
+  header.dw-header .dw-nav-links>a.dw-nav-admin{
+    color:#ff4d00!important;
+    font-weight:850!important;
+  }
+  header.dw-header .dw-nav-links>a.dw-nav-admin:hover{
+    background:#fff4e8!important;
+    color:#ff4d00!important;
+  }
+  header.dw-header .dw-menu-backdrop{
+    background:rgba(8,45,107,.38)!important;
+  }
+}
