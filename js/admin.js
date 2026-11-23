@@ -152,12 +152,31 @@ async function loadCatalog(){
  });
  adminMsg.textContent=(data||[]).length+" services loaded";
 }
+
+async function loadLeads(){
+ adminMsg.textContent="Loading client enquiries…";
+ const {data,error}=await db.from("business_card_leads").select("id,card_id,name,phone,email,message,source,created_at").order("created_at",{ascending:false}).limit(200);
+ if(error){adminMsg.textContent="Could not load client enquiries: "+error.message;return;}
+ const box=document.getElementById("leads-list");box.innerHTML="";
+ (data||[]).forEach(x=>{const el=document.createElement("article");el.className="order-card";el.innerHTML='<div class="order-title"><div><strong>'+esc(x.name)+'</strong><span>'+esc(new Date(x.created_at).toLocaleString("en-IN"))+'</span></div><b class="status">'+esc(x.source||"Website")+'</b></div><div class="order-grid"><div><small>Phone</small><b>'+esc(x.phone||"—")+'</b></div><div><small>Email</small><b>'+esc(x.email||"—")+'</b></div></div><p class="requirements">'+esc(x.message||"No message")+'</p>';box.append(el);});
+ adminMsg.textContent=(data||[]).length+" enquiries";
+}
+async function loadAudit(){
+ adminMsg.textContent="Loading admin audit history…";
+ const {data,error}=await db.from("admin_audit_logs").select("id,actor_user_id,action,entity_type,entity_id,details,created_at").order("created_at",{ascending:false}).limit(200);
+ if(error){adminMsg.textContent="Could not load audit history: "+error.message;return;}
+ const box=document.getElementById("audit-list");box.innerHTML="";
+ (data||[]).forEach(x=>{const el=document.createElement("article");el.className="order-card";const details=typeof x.details==="string"?x.details:JSON.stringify(x.details||{});el.innerHTML='<div class="order-title"><div><strong>'+esc(x.action)+'</strong><span>'+esc(new Date(x.created_at).toLocaleString("en-IN"))+'</span></div><b class="status">'+esc(x.entity_type||"Record")+'</b></div><div class="order-grid"><div><small>Actor ID</small><b>'+esc(x.actor_user_id||"—")+'</b></div><div><small>Entity ID</small><b>'+esc(x.entity_id||"—")+'</b></div></div><p class="requirements">'+esc(details)+'</p>';box.append(el);});
+ adminMsg.textContent=(data||[]).length+" audit events";
+}
+
 async function showSection(section){
  activeSection=section;
  document.querySelectorAll(".dw-admin-sidebar [data-section]").forEach(b=>b.classList.toggle("active",b.dataset.section===section));
- const ids=["clients-panel","cards-panel","orders-panel","store-panel","services-panel","nfc-panel"];ids.forEach(id=>{const el=document.getElementById(id);if(el)el.hidden=true;});
- const title=document.getElementById("section-title");const titles={"clients":"Client Dashboard / Overview","all-clients":"All Clients","store-orders":"Store Orders / Purchasing","cards":"Business Card Management","card-payments":"Business Card Payments","active-cards":"Active Cards","trial-cards":"Trial / Pending Cards","expired-cards":"Expired / Suspended Cards","store":"Store Management","orders":"Store Orders / Purchasing & Service Orders","nfc":"NFC Business Cards","without-nfc":"Without NFC Business Cards","services":"Services","service-payments":"Service Payments","payment-history":"Payment History"};
+ const ids=["clients-panel","cards-panel","orders-panel","store-panel","services-panel","nfc-panel","leads-panel","audit-panel"];ids.forEach(id=>{const el=document.getElementById(id);if(el)el.hidden=true;});
+ const title=document.getElementById("section-title");const titles={"clients":"Client Dashboard / Overview","all-clients":"All Clients","store-orders":"Store Orders / Purchasing","cards":"Business Card Management","card-payments":"Business Card Payments","active-cards":"Active Cards","trial-cards":"Trial / Pending Cards","expired-cards":"Expired / Suspended Cards","store":"Store Management","orders":"Store Orders / Purchasing & Service Orders","nfc":"NFC Business Cards","without-nfc":"Without NFC Business Cards","services":"Services","service-payments":"Service Payments","payment-history":"Payment History","leads":"Client Leads & Enquiries","audit":"Admin Audit History"};
  title.textContent=titles[section]||"Admin Dashboard";
+ if(section==="leads"||section==="audit"){const panel=document.getElementById(section+"-panel");panel.hidden=false;if(section==="leads")await loadLeads();else await loadAudit();return;}
  if(section==="clients"||section==="all-clients"){document.getElementById("clients-panel").hidden=false;await loadClients(section==="clients");return;}
  if(["store","services"].includes(section)){document.getElementById(section+"-panel").hidden=false;if(section==="store")await loadStore();else await loadCatalog();return;}
  if(section==="nfc"||section==="store-orders"){document.getElementById("cards-panel").hidden=false;await loadCards();return;}
