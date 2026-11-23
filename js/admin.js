@@ -100,7 +100,7 @@ async function loadCards(){
   const actions=document.createElement("div");actions.className="verify-actions";
   if(p&&p.payment_status==="pending_verification"){const verify=document.createElement("button");verify.textContent="Verify payment & activate 5 years";verify.addEventListener("click",async()=>{if(!confirm("Confirm that the matching payment is visible in the bank/UPI account? This activates the card for 5 years."))return;verify.disabled=true;const {error}=await db.rpc("admin_verify_business_card_payment",{p_payment_id:p.id,p_note:null});if(error){adminMsg.textContent=error.message;verify.disabled=false;return;}await loadCards();});actions.append(verify);}
   if(c.card_status!=="suspended"){const suspend=document.createElement("button");suspend.className="secondary";suspend.textContent="Suspend";suspend.addEventListener("click",async()=>{if(!confirm("Suspend this business card?"))return;const {error}=await db.rpc("admin_set_business_card_status",{p_card_id:c.id,p_status:"suspended",p_note:null});adminMsg.textContent=error?error.message:"Card suspended.";if(!error)await loadCards();});actions.append(suspend);}
-  else{const activate=document.createElement("button");activate.textContent="Restore status";activate.addEventListener("click",async()=>{const {error}=await db.rpc("admin_set_business_card_status",{p_card_id:c.id,p_status:"active",p_note:null});adminMsg.textContent=error?error.message:"Card status updated.";if(!error)await loadCards();});actions.append(activate);}
+
   el.append(actions);cards.append(el);
  });
  adminMsg.textContent=(data||[]).length+" business cards";
