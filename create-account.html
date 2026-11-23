@@ -5,7 +5,8 @@
 <p id="message" class="msg" role="status"></p><p class="muted" style="font-size:12px">Already registered? <a href="client-login.html">Client Login</a> · <a href="index.html">Back to website</a></p></section></main>
 <script>
 const db=window.supabase.createClient("https://lvbesvjeiaxudhsajyuc.supabase.co","sb_publishable_EhHpIAzaJC3y7MBkcv0wDQ_Vz8kXsnR");
-const requestedPlan=new URLSearchParams(location.search).get("plan");if(["without-nfc","with-nfc"].includes(requestedPlan))document.querySelector('select[name="plan"]').value=requestedPlan;\nconst planSelect=document.getElementById("plan"),shippingFields=document.getElementById("shippingFields");function syncShipping(){const enabled=planSelect.value==="with-nfc";shippingFields.hidden=!enabled;["shippingAddress","shippingCity","shippingState","shippingPincode"].forEach(id=>document.getElementById(id).required=enabled);}planSelect.addEventListener("change",syncShipping);syncShipping();
+const requestedPlan=new URLSearchParams(location.search).get("plan");if(["without-nfc","with-nfc"].includes(requestedPlan))document.querySelector('select[name="plan"]').value=requestedPlan;
+const planSelect=document.getElementById("plan"),shippingFields=document.getElementById("shippingFields");function syncShipping(){const enabled=planSelect.value==="with-nfc";shippingFields.hidden=!enabled;["shippingAddress","shippingCity","shippingState","shippingPincode"].forEach(id=>document.getElementById(id).required=enabled);}planSelect.addEventListener("change",syncShipping);syncShipping();
 document.getElementById("signup").addEventListener("submit",async e=>{
  e.preventDefault();const b=document.getElementById("submit"),m=document.getElementById("message"),f=new FormData(e.currentTarget);
  const email=String(f.get("email")).trim().toLowerCase(),password=String(f.get("password")),mobile=String(f.get("mobile")).trim(),plan=String(f.get("plan"));
