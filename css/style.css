@@ -888,3 +888,16 @@ header.dw-header .dw-nav-links>a.dw-nav-admin{
 @media(prefers-reduced-motion:reduce){
   header.dw-header .dw-nav-links>a{transition:none!important}
 }
+
+
+/* Restore approved two-row mobile navigation; desktop navigation remains unchanged. */
+.dw-mobile-nav-link{display:none!important}
+@media(max-width:680px){
+ header.dw-header .dw-nav-links{grid-template-columns:repeat(3,minmax(0,1fr))!important;grid-auto-rows:minmax(34px,auto)!important;gap:3px 4px!important;padding-top:53px!important}
+ header.dw-header .dw-nav-links>a.dw-mobile-nav-link{display:flex!important}
+ header.dw-header .dw-nav-links>a.dw-mobile-hide{display:none!important}
+ header.dw-header .dw-nav-links>a.dw-nav-admin{display:flex!important}
+}
+@media(max-width:380px){
+ header.dw-header .dw-nav-links{grid-template-columns:repeat(3,minmax(0,1fr))!important;gap:2px!important}
+}
