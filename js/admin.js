@@ -29,8 +29,9 @@ async function load(){
  const {data,error}=await db.from("orders").select("id,order_number,customer_name,customer_email,customer_phone,business_name,requirements,service_snapshot,amount_due_inr,quoted_amount_inr,status,payment_status,created_at,payment_transactions(id,provider,amount_inr,status,utr_reference,reference_details,upi_id,submitted_at,verified_at,verification_note),package_access_grants(id,access_status,granted_at)").order("created_at",{ascending:false}).limit(100);
  if(error){adminMsg.textContent="Could not load orders. Check admin database permissions.";return;}
  list.innerHTML="";
- if(!data?.length){list.textContent="No orders yet.";adminMsg.textContent="";return;}
- data.forEach(o=>{
+ const visibleOrders=(data||[]).filter(o=>{const payments=o.payment_transactions||[];if(activeSection==="service-payments")return payments.length>0;if(activeSection==="payment-history")return payments.length>0||o.payment_status==="paid";return true;});
+ if(!visibleOrders.length){list.textContent=activeSection==="service-payments"?"No service payment records yet.":activeSection==="payment-history"?"No payment history yet.":"No orders yet.";adminMsg.textContent="";return;}
+ visibleOrders.forEach(o=>{
  const pay=(o.payment_transactions||[]).sort((a,b)=>new Date(b.submitted_at||0)-new Date(a.submitted_at||0))[0];
  const card=document.createElement("article");card.className="order-card";
  card.innerHTML='<div class="order-title"><div><strong>'+esc(o.order_number||o.id)+'</strong><span>'+esc(new Date(o.created_at).toLocaleString("en-IN"))+'</span></div><b class="status">'+esc(o.payment_status)+'</b></div><div class="order-grid"><div><small>Customer</small><b>'+esc(o.customer_name)+'</b><span>'+esc(o.customer_phone)+' · '+esc(o.customer_email)+'</span></div><div><small>Service / package</small><b>'+esc((o.service_snapshot?.service_name||'Service')+' · '+(o.service_snapshot?.package_name||'Custom quote'))+'</b></div><div><small>Amount due</small><b>'+esc(rupees(o.amount_due_inr??o.quoted_amount_inr))+'</b></div><div><small>Order status</small><b>'+esc(o.status)+'</b></div><div><small>Business</small><b>'+esc(o.business_name||"—")+'</b></div></div><p class="requirements">'+esc(o.requirements||"No additional requirements.")+'</p>';
@@ -84,7 +85,7 @@ async function load(){
  } else if(!pay){const noPay=document.createElement("p");noPay.className="muted";noPay.textContent="No UPI reference submitted.";card.append(noPay);}
  list.append(card);
  });
- const pending=data.filter(o=>o.payment_status!=="paid"&&(o.payment_transactions||[]).some(p=>p.status==="pending_verification")); adminMsg.textContent=pending.length+" payment approvals pending · "+data.length+" recent orders";
+ const pending=(data||[]).filter(o=>o.payment_status!=="paid"&&(o.payment_transactions||[]).some(p=>p.status==="pending_verification")); adminMsg.textContent=pending.length+" payment approvals pending · "+visibleOrders.length+" records shown";
 }
 async function verify(order,pay,note){
  if(!confirm("Confirm only after independently seeing the matching credit in PhonePe / bank statement. Mark this order PAID?"))return;
@@ -179,8 +180,8 @@ async function showSection(section){
  if(section==="leads"||section==="audit"){const panel=document.getElementById(section+"-panel");panel.hidden=false;if(section==="leads")await loadLeads();else await loadAudit();return;}
  if(section==="clients"||section==="all-clients"){document.getElementById("clients-panel").hidden=false;await loadClients(section==="clients");return;}
  if(["store","services"].includes(section)){document.getElementById(section+"-panel").hidden=false;if(section==="store")await loadStore();else await loadCatalog();return;}
- if(section==="nfc"||section==="store-orders"){document.getElementById("cards-panel").hidden=false;await loadCards();return;}
- if(["cards","card-payments","active-cards","trial-cards","expired-cards","without-nfc","store-orders"].includes(section)){document.getElementById("cards-panel").hidden=false;await loadCards();return;}
+ if(section==="nfc"){document.getElementById("cards-panel").hidden=false;await loadCards();return;}
+ if(["cards","card-payments","active-cards","trial-cards","expired-cards","without-nfc"].includes(section)){document.getElementById("cards-panel").hidden=false;await loadCards();return;}
  document.getElementById("orders-panel").hidden=false;await load();
 }
 async function loadClients(showOverview=true){
