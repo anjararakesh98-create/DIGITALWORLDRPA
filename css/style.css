@@ -594,3 +594,64 @@ a.dw-service-card:focus-visible{outline:3px solid var(--dw-orange);outline-offse
  .dw-nav-links>a.dw-nav-business-card{align-self:flex-start;margin:8px 0 4px}
  .dw-nav-links>a.dw-nav-admin{align-self:flex-start;margin:12px 0 4px}
 }
+
+
+/* Unified premium 3D navigation system — Digital World */
+.dw-nav-links{align-items:center;gap:10px!important}
+.dw-nav-links>a:not(.dw-nav-business-card){
+  display:inline-flex!important;align-items:center;justify-content:center;
+  min-height:46px;padding:12px 17px!important;border:1px solid #0b63c9!important;
+  border-radius:11px!important;background:linear-gradient(180deg,#1677df 0%,#0756c8 48%,#063b91 100%)!important;
+  color:#fff!important;font-size:13px!important;font-weight:900!important;
+  letter-spacing:.035em;text-transform:uppercase;text-decoration:none!important;white-space:nowrap;
+  box-shadow:0 6px 0 #052d70,0 9px 17px rgba(8,45,107,.24),inset 0 1px 0 rgba(255,255,255,.38)!important;
+  transition:transform .18s ease,box-shadow .18s ease,filter .18s ease!important;
+}
+.dw-nav-links>a:not(.dw-nav-business-card):hover{
+  transform:translateY(-3px)!important;filter:brightness(1.12);
+  box-shadow:0 8px 0 #052d70,0 13px 22px rgba(8,45,107,.3),0 0 15px rgba(0,194,255,.22),inset 0 1px 0 rgba(255,255,255,.42)!important;
+}
+.dw-nav-links>a:not(.dw-nav-business-card):active{
+  transform:translateY(3px)!important;
+  box-shadow:0 2px 0 #052d70,0 4px 9px rgba(8,45,107,.2),inset 0 2px 5px rgba(0,0,0,.18)!important;
+}
+.dw-nav-links>a:not(.dw-nav-business-card)::after{display:none!important}
+.dw-nav-links>a.dw-nav-store{background:linear-gradient(180deg,#1677df 0%,#0756c8 48%,#063b91 100%)!important;border-color:#0b63c9!important;color:#fff!important;box-shadow:0 6px 0 #052d70,0 9px 17px rgba(8,45,107,.24),inset 0 1px 0 rgba(255,255,255,.38)!important}
+.dw-nav-links>a.dw-nav-business-card{
+  min-width:190px;min-height:48px;align-items:center;gap:6px;padding:9px 18px 8px!important;
+  border:1px solid #0b63c9!important;border-radius:12px!important;
+  background:linear-gradient(180deg,#1677df 0%,#0756c8 48%,#063b91 100%)!important;
+  color:#fff!important;box-shadow:0 7px 0 #052d70,0 11px 20px rgba(8,45,107,.27),inset 0 1px 0 rgba(255,255,255,.4)!important;
+  transition:transform .2s ease,box-shadow .2s ease,filter .2s ease!important;
+}
+.dw-nav-business-title{font-size:15px!important;font-weight:950!important;letter-spacing:.035em!important;color:#fff!important;text-shadow:0 1px 2px rgba(0,0,0,.22)}
+.dw-nav-links>a.dw-nav-business-card small{
+  align-self:center!important;color:#8edcff!important;font-size:10px!important;font-weight:950!important;
+  letter-spacing:.13em!important;line-height:1.15!important;text-shadow:0 0 5px #00c2ff,0 0 11px rgba(0,194,255,.9);
+  animation:dwTrialGlow 1.45s ease-in-out infinite alternate;
+}
+.dw-nav-links>a.dw-nav-business-card:hover{
+  transform:translateY(-3px)!important;filter:brightness(1.12);
+  box-shadow:0 9px 0 #052d70,0 14px 24px rgba(8,45,107,.32),0 0 19px rgba(0,194,255,.42),inset 0 1px 0 rgba(255,255,255,.45)!important;
+}
+.dw-nav-links>a.dw-nav-business-card:active{transform:translateY(3px)!important;box-shadow:0 2px 0 #052d70,0 4px 9px rgba(8,45,107,.2)!important}
+@keyframes dwTrialGlow{from{opacity:.78;text-shadow:0 0 3px #00c2ff,0 0 7px rgba(0,194,255,.55)}to{opacity:1;text-shadow:0 0 7px #00c2ff,0 0 15px #00c2ff,0 0 22px rgba(0,194,255,.8)}}
+.dw-nav-links>a.dw-nav-admin{
+  min-height:46px;padding:12px 18px!important;border:1px solid #e66e00!important;
+  background:linear-gradient(180deg,#ffad43 0%,#ff8a00 50%,#df6500 100%)!important;
+  color:#fff!important;box-shadow:0 6px 0 #9b4300,0 9px 17px rgba(255,138,0,.28),inset 0 1px 0 rgba(255,255,255,.4)!important;
+}
+.dw-nav-links>a.dw-nav-admin:hover{box-shadow:0 8px 0 #9b4300,0 13px 22px rgba(255,138,0,.36),0 0 14px rgba(255,138,0,.25)!important}
+.dw-nav-links>a.dw-nav-admin:active{box-shadow:0 2px 0 #9b4300,0 4px 9px rgba(255,138,0,.2)!important}
+@media(max-width:1100px){
+ .dw-nav-links{gap:8px!important}
+ .dw-nav-links>a:not(.dw-nav-business-card){padding:10px 12px!important;font-size:11px!important;min-height:42px}
+ .dw-nav-links>a.dw-nav-business-card{min-width:170px}
+ .dw-nav-business-title{font-size:13px!important}
+}
+@media(max-width:900px){
+ .dw-nav-links>a:not(.dw-nav-business-card),.dw-nav-links>a.dw-nav-business-card{align-self:stretch!important;width:100%;max-width:100%;margin:5px 0!important}
+ .dw-nav-links>a:not(.dw-nav-business-card){justify-content:center!important}
+ .dw-nav-links>a.dw-nav-business-card{align-items:center!important}
+}
+@media(prefers-reduced-motion:reduce){.dw-nav-links>a,.dw-nav-business-card small{animation:none!important;transition:none!important}}
