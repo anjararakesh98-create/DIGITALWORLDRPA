@@ -1,0 +1,18 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="robots" content="noindex,nofollow"><meta name="theme-color" content="#082d6b"><title>Create Account | Digital World</title><link rel="stylesheet" href="css/client-portal.css"><script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script></head>
+<body><main class="wrap"><section class="panel" style="max-width:620px;margin:5vh auto"><div class="brand">Digital World</div><p class="muted">SMART DIGITAL BUSINESS CARD</p><h1>Create your account</h1><p class="muted">Create your login and start your 7-day free trial. Your email is your login ID; mobile is used only as contact information.</p>
+<form id="signup"><label>Business Name *</label><input name="business" required maxlength="100"><label>Owner Name *</label><input name="owner" required maxlength="80"><label>Mobile Number *</label><input name="mobile" type="tel" required pattern="[0-9+ -]{10,15}" maxlength="15"><label>Email Address (Login ID) *</label><input name="email" type="email" required autocomplete="email"><label>Create Password *</label><input name="password" type="password" required minlength="8" autocomplete="new-password"><label>Business Card Plan *</label><select name="plan" required><option value="without-nfc">Without NFC · ₹299 / 5 years</option><option value="with-nfc">With NFC · ₹499 + ₹59 shipping / 5 years</option></select><button id="submit" style="width:100%;margin-top:20px">Create Account &amp; Open Client Dashboard</button></form>
+<p id="message" class="msg" role="status"></p><p class="muted" style="font-size:12px">Already registered? <a href="client-login.html">Client Login</a> · <a href="index.html">Back to website</a></p></section></main>
+<script>
+const db=window.supabase.createClient("https://lvbesvjeiaxudhsajyuc.supabase.co","sb_publishable_EhHpIAzaJC3y7MBkcv0wDQ_Vz8kXsnR");
+document.getElementById("signup").addEventListener("submit",async e=>{
+ e.preventDefault();const b=document.getElementById("submit"),m=document.getElementById("message"),f=new FormData(e.currentTarget);
+ const email=String(f.get("email")).trim().toLowerCase(),password=String(f.get("password")),mobile=String(f.get("mobile")).trim();
+ if(!/^[0-9+ -]{10,15}$/.test(mobile)){m.textContent="Enter a valid mobile number.";return;}
+ b.disabled=true;m.textContent="Creating your secure account…";
+ const {data,error}=await db.auth.signUp({email,password,options:{emailRedirectTo:new URL("client-login.html",location.href).href,data:{full_name:String(f.get("owner")).trim(),business_name:String(f.get("business")).trim(),mobile,plan_code:f.get("plan")} }});
+ if(error){m.textContent=error.message;b.disabled=false;return;}
+ if(data.session){location.href="client-workspace.html";return;}
+ m.textContent="Account created. Verify your email using the link sent to your inbox, then sign in. Email confirmation is currently required by the account settings.";b.disabled=false;
+});
+</script></body></html>
