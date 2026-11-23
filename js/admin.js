@@ -11,6 +11,7 @@ async function access(){
  login.hidden=true;dash.hidden=false;await load();
 }
 async function load(){
+ if(!document.getElementById("cards-panel").hidden){await loadCards();return;}
  adminMsg.textContent="Loading…";
  const {data,error}=await db.from("orders").select("id,order_number,customer_name,customer_email,customer_phone,business_name,requirements,service_snapshot,amount_due_inr,quoted_amount_inr,status,payment_status,created_at,payment_transactions(id,provider,amount_inr,status,utr_reference,reference_details,upi_id,submitted_at,verified_at,verification_note),package_access_grants(id,access_status,granted_at)").order("created_at",{ascending:false}).limit(100);
  if(error){adminMsg.textContent="Could not load orders. Check admin database permissions.";return;}
@@ -85,8 +86,30 @@ async function reject(pay,note){
  adminMsg.textContent=error?"Could not update payment. Check permissions.":"Reference marked as not verified.";
  if(!error)await load();
 }
+async function loadCards(){
+ adminMsg.textContent="Loading business cards…";
+ const {data,error}=await db.from("business_cards").select("id,slug,business_name,owner_name,contact_email,contact_mobile,plan_code,card_status,trial_ends_at,valid_until,created_at,business_card_payments(id,amount_inr,shipping_inr,utr_reference,reference_details,payment_status,created_at)").order("created_at",{ascending:false}).limit(200);
+ if(error){adminMsg.textContent="Could not load business cards: "+error.message;return;}
+ const cards=document.getElementById("cards-list");cards.innerHTML="";
+ (data||[]).forEach(c=>{
+  const p=(c.business_card_payments||[]).sort((a,b)=>new Date(b.created_at)-new Date(a.created_at))[0];
+  const el=document.createElement("article");el.className="order-card";
+  const publicUrl=new URL("public-card.html?card="+encodeURIComponent(c.slug),location.href).href;
+  el.innerHTML='<div class="order-title"><div><strong>'+esc(c.business_name)+'</strong><span>'+esc(c.owner_name)+' · '+esc(c.contact_email)+'</span></div><b class="status">'+esc(c.card_status)+'</b></div><div class="order-grid"><div><small>Mobile</small><b>'+esc(c.contact_mobile||"—")+'</b></div><div><small>Plan</small><b>'+esc(c.plan_code==="with-nfc"?"With NFC · ₹499 + ₹59 shipping":"Without NFC · ₹299")+'</b></div><div><small>Trial ends</small><b>'+esc(new Date(c.trial_ends_at).toLocaleDateString("en-IN"))+'</b></div><div><small>Valid until</small><b>'+esc(c.valid_until?new Date(c.valid_until).toLocaleDateString("en-IN"):"Not activated")+'</b></div></div><p><a href="'+esc(publicUrl)+'" target="_blank" rel="noopener">Open public card ↗</a></p>';
+  if(p){el.innerHTML+='<div class="payment-details"><b>Payment · '+esc(p.payment_status)+' · ₹'+esc(p.amount_inr)+'</b><span>UTR: '+esc(p.utr_reference||"Not submitted")+'</span><span>'+esc(p.reference_details||"")+'</span></div>';}
+  const actions=document.createElement("div");actions.className="verify-actions";
+  if(p&&p.payment_status==="pending_verification"){const verify=document.createElement("button");verify.textContent="Verify payment & activate 5 years";verify.addEventListener("click",async()=>{if(!confirm("Confirm that the matching payment is visible in the bank/UPI account? This activates the card for 5 years."))return;verify.disabled=true;const {error}=await db.rpc("admin_verify_business_card_payment",{p_payment_id:p.id,p_note:null});if(error){adminMsg.textContent=error.message;verify.disabled=false;return;}await loadCards();});actions.append(verify);}
+  if(c.card_status!=="suspended"){const suspend=document.createElement("button");suspend.className="secondary";suspend.textContent="Suspend";suspend.addEventListener("click",async()=>{if(!confirm("Suspend this business card?"))return;const {error}=await db.rpc("admin_set_business_card_status",{p_card_id:c.id,p_status:"suspended",p_note:null});adminMsg.textContent=error?error.message:"Card suspended.";if(!error)await loadCards();});actions.append(suspend);}
+  else{const activate=document.createElement("button");activate.textContent="Restore status";activate.addEventListener("click",async()=>{const {error}=await db.rpc("admin_set_business_card_status",{p_card_id:c.id,p_status:"active",p_note:null});adminMsg.textContent=error?error.message:"Card status updated.";if(!error)await loadCards();});actions.append(activate);}
+  el.append(actions);cards.append(el);
+ });
+ adminMsg.textContent=(data||[]).length+" business cards";
+}
+document.getElementById("show-orders").addEventListener("click",()=>{document.getElementById("orders-panel").hidden=false;document.getElementById("cards-panel").hidden=true;load();});
+document.getElementById("show-cards").addEventListener("click",()=>{document.getElementById("orders-panel").hidden=true;document.getElementById("cards-panel").hidden=false;loadCards();});
+document.getElementById("refresh").addEventListener("click",()=>document.getElementById("cards-panel").hidden?load():loadCards());
 document.getElementById("login-form").addEventListener("submit",async e=>{e.preventDefault();msg.textContent="Signing in…";const f=new FormData(e.currentTarget);const {error}=await db.auth.signInWithPassword({email:f.get("email"),password:f.get("password")});if(error){msg.textContent="Sign in failed. Check credentials or admin access.";return;}await access();});
 document.getElementById("signout").addEventListener("click",async()=>{await db.auth.signOut();await access();});
-document.getElementById("refresh").addEventListener("click",load);
+
 access();
 })();
