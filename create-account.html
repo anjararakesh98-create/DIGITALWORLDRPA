@@ -12,7 +12,7 @@ document.getElementById("signup").addEventListener("submit",async e=>{
  b.disabled=true;m.textContent="Creating your secure account…";
  const {data,error}=await db.auth.signUp({email,password,options:{emailRedirectTo:new URL("client-login.html",location.href).href,data:{full_name:String(f.get("owner")).trim(),business_name:String(f.get("business")).trim(),mobile,plan_code:f.get("plan")} }});
  if(error){m.textContent=error.message;b.disabled=false;return;}
- if(data.session){location.href="client-workspace.html";return;}
+ if(data.session){location.href="client-dashboard.html";return;}
  m.textContent="Account created. Verify your email using the link sent to your inbox, then sign in. Email confirmation is currently required by the account settings.";b.disabled=false;
 });
 </script></body></html>
