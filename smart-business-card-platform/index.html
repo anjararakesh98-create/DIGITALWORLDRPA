@@ -105,13 +105,13 @@ async function editClient(id){
  const {data:x,error}=await db.from('business_cards').select('*').eq('id',id).maybeSingle();
  if(error||!x){alert(error?.message||'Client not found');return}
  const d=x.public_data||{};
- $('content').innerHTML='<div class="panel"><div class="admin-head"><h2>Edit Client · '+esc(x.business_name)+'</h2><button class="btn alt" onclick="renderAdminPanel(\'All Clients\')">Back to clients</button></div><div class="grid">'+field('Business name','edit_business',x.business_name)+field('Owner name','edit_owner',x.owner_name)+field('Mobile number','edit_mobile',x.contact_mobile||'')+field('Business card email','edit_email',x.contact_email,'email')+field('Website','edit_website',d.website||'','url')+field('Business address','edit_address',d.address||'')+field('Plan code','edit_plan',x.plan_code)+field('Account status','edit_status',x.card_status)+field('Trial end date','edit_trial',x.trial_ends_at?new Date(x.trial_ends_at).toISOString().slice(0,10):'','date')+'</div><div class="field"><label>About business</label><textarea id="edit_about">'+esc(d.about||'')+'</textarea></div><div class="row"><button class="btn" onclick="saveClientEdit(\''+x.id+'\')">Save client details</button><button class="btn danger" onclick="suspendClient(\''+x.id+'\')">Suspend card</button></div><p class="muted" style="font-size:12px">These are digital-card profile fields. Login email and password are managed separately through secure account administration.</p></div>';
+ $('content').innerHTML='<div class="panel"><div class="admin-head"><h2>Edit Client · '+esc(x.business_name)+'</h2><button class="btn alt" onclick="renderAdminPanel(\'All Clients\')">Back to clients</button></div><div class="grid">'+field('Business name','edit_business',x.business_name)+field('Owner name','edit_owner',x.owner_name)+field('Mobile number','edit_mobile',x.contact_mobile||'')+field('Business card email','edit_email',x.contact_email,'email')+field('Website','edit_website',d.website||'','url')+field('Business address','edit_address',d.address||'')+'<div class="field"><label>Current plan</label><input value="'+esc(x.plan_code)+'" disabled></div><div class="field"><label>Current status</label><input value="'+esc(x.card_status)+'" disabled></div>'+'</div><div class="field"><label>About business</label><textarea id="edit_about">'+esc(d.about||'')+'</textarea></div><div class="row"><button class="btn" onclick="saveClientEdit(\''+x.id+'\')">Save client details</button><button class="btn danger" onclick="suspendClient(\''+x.id+'\')">Suspend card</button></div><p class="muted" style="font-size:12px">These are digital-card profile fields. Login email and password are managed separately through secure account administration.</p></div>';
 }
 async function saveClientEdit(id){
  const {data:x,error:readError}=await db.from('business_cards').select('public_data').eq('id',id).single();
  if(readError){alert(readError.message);return}
  const d=x.public_data||{};
- const patch={business_name:$('f_edit_business').value.trim(),owner_name:$('f_edit_owner').value.trim(),contact_mobile:$('f_edit_mobile').value.trim(),contact_email:$('f_edit_email').value.trim(),plan_code:$('f_edit_plan').value.trim(),card_status:$('f_edit_status').value.trim(),public_data:{...d,website:$('f_edit_website').value.trim(),address:$('f_edit_address').value.trim(),about:$('edit_about').value.trim()},updated_at:new Date().toISOString()};
+ const patch={business_name:$('f_edit_business').value.trim(),owner_name:$('f_edit_owner').value.trim(),contact_mobile:$('f_edit_mobile').value.trim(),contact_email:$('f_edit_email').value.trim(),public_data:{...d,website:$('f_edit_website').value.trim(),address:$('f_edit_address').value.trim(),about:$('edit_about').value.trim()},updated_at:new Date().toISOString()};
  const trial=$('f_edit_trial').value;if(trial)patch.trial_ends_at=new Date(trial+'T23:59:59').toISOString();
  const {error}=await db.from('business_cards').update(patch).eq('id',id);
  if(error){alert(error.message);return}
@@ -119,7 +119,7 @@ async function saveClientEdit(id){
 }
 async function suspendClient(id){
  if(!confirm('Suspend this client digital card?'))return;
- const {error}=await db.rpc('admin_set_business_card_status',{p_card_id:id,p_status:'suspended'});
+ const {error}=await db.rpc('admin_set_business_card_status',{p_card_id:id,p_status:'suspended',p_note:'Suspended from Admin Panel'});
  if(error){alert(error.message);return}
  alert('Client card suspended.');await renderAdminPanel('All Clients');
 }
