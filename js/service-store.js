@@ -157,8 +157,9 @@
     ].join("\n");
     const whatsappUrl = "https://wa.me/" + WHATSAPP_NUMBER + "?text=" + encodeURIComponent(message);
     trackEvent("generate_lead", {currency:"INR",service_name:service.name,package_name:pkg.name});
-    const opened = window.open(whatsappUrl, "_blank", "noopener,noreferrer");
-    if (!opened) window.location.href = whatsappUrl;
+    const opened = window.open(whatsappUrl, "_blank");
+    if (opened) opened.opener = null;
+    else window.location.href = whatsappUrl;
     submitButton.textContent = "Opening WhatsApp…";
     notice.textContent = "Your enquiry details are ready in WhatsApp. Please press Send in WhatsApp to deliver them to Digital World.";
     notice.scrollIntoView({behavior:"smooth",block:"center"});
