@@ -171,12 +171,23 @@ async function loadAudit(){
  adminMsg.textContent=(data||[]).length+" audit events";
 }
 
+
+async function loadAdminUsers(){
+ adminMsg.textContent="Loading authorised admin accounts…";
+ const {data,error}=await db.from("user_profiles").select("user_id,full_name,role,created_at").in("role",["admin","super_admin"]).order("created_at",{ascending:false});
+ if(error){adminMsg.textContent="Could not load admin users: "+error.message;return;}
+ const box=document.getElementById("admin-users-list");box.innerHTML="";
+ (data||[]).forEach(x=>{const el=document.createElement("article");el.className="order-card";el.innerHTML='<div class="order-title"><div><strong>'+esc(x.full_name||"Admin account")+'</strong><span>'+esc(x.user_id)+'</span></div><b class="status">'+esc(x.role)+'</b></div><small>Created: '+esc(x.created_at?new Date(x.created_at).toLocaleString("en-IN"):"—")+'</small>';box.append(el);});
+ adminMsg.textContent=(data||[]).length+" authorised admin accounts · Read-only";
+}
+
 async function showSection(section){
  activeSection=section;
  document.querySelectorAll(".dw-admin-sidebar [data-section]").forEach(b=>b.classList.toggle("active",b.dataset.section===section));
- const ids=["clients-panel","cards-panel","orders-panel","store-panel","services-panel","nfc-panel","leads-panel","audit-panel"];ids.forEach(id=>{const el=document.getElementById(id);if(el)el.hidden=true;});
- const title=document.getElementById("section-title");const titles={"clients":"Client Dashboard / Overview","all-clients":"All Clients","store-orders":"Store Orders / Purchasing","cards":"Business Card Management","card-payments":"Business Card Payments","active-cards":"Active Cards","trial-cards":"Trial / Pending Cards","expired-cards":"Expired / Suspended Cards","store":"Store Management","orders":"Store Orders / Purchasing & Service Orders","nfc":"NFC Business Cards","without-nfc":"Without NFC Business Cards","services":"Services","service-payments":"Service Payments","payment-history":"Payment History","leads":"Client Leads & Enquiries","audit":"Admin Audit History"};
+ const ids=["clients-panel","cards-panel","orders-panel","store-panel","services-panel","nfc-panel","leads-panel","audit-panel","admin-users-panel"];ids.forEach(id=>{const el=document.getElementById(id);if(el)el.hidden=true;});
+ const title=document.getElementById("section-title");const titles={"clients":"Client Dashboard / Overview","all-clients":"All Clients","store-orders":"Store Orders / Purchasing","cards":"Business Card Management","card-payments":"Business Card Payments","active-cards":"Active Cards","trial-cards":"Trial / Pending Cards","expired-cards":"Expired / Suspended Cards","store":"Store Management","orders":"Store Orders / Purchasing & Service Orders","nfc":"NFC Business Cards","without-nfc":"Without NFC Business Cards","services":"Services","service-payments":"Service Payments","payment-history":"Payment History","leads":"Client Leads & Enquiries","audit":"Admin Audit History","admin-users":"Admin Users"};
  title.textContent=titles[section]||"Admin Dashboard";
+ if(section==="admin-users"){document.getElementById("admin-users-panel").hidden=false;await loadAdminUsers();return;}
  if(section==="leads"||section==="audit"){const panel=document.getElementById(section+"-panel");panel.hidden=false;if(section==="leads")await loadLeads();else await loadAudit();return;}
  if(section==="clients"||section==="all-clients"){document.getElementById("clients-panel").hidden=false;await loadClients(section==="clients");return;}
  if(["store","services"].includes(section)){document.getElementById(section+"-panel").hidden=false;if(section==="store")await loadStore();else await loadCatalog();return;}
