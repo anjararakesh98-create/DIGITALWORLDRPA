@@ -154,6 +154,33 @@ async function loadStore(){
  document.getElementById("store-summary").innerHTML='<div class="dw-admin-stat"><small>Digital Card Orders</small><b>'+all.length+'</b></div><div class="dw-admin-stat"><small>With NFC</small><b>'+all.filter(x=>x.plan_code==="with-nfc").length+'</b></div><div class="dw-admin-stat"><small>Without NFC</small><b>'+all.filter(x=>x.plan_code==="without-nfc").length+'</b></div><div class="dw-admin-stat"><small>Service Orders</small><b>'+os.length+'</b></div>';
  adminMsg.textContent="Store summary loaded";
 }
+async function loadPaymentSettings(){
+ adminMsg.textContent="Loading payment settings…";
+ const {data,error}=await db.from("business_card_platform_settings").select("id,upi_id,payment_qr_url,support_phone,updated_at").eq("id",true).maybeSingle();
+ if(error){adminMsg.textContent="Could not load payment settings: "+error.message;return;}
+ document.getElementById("setting-upi-id").value=data?.upi_id||"";
+ document.getElementById("setting-qr-url").value=data?.payment_qr_url||"";
+ document.getElementById("setting-support-phone").value=data?.support_phone||"";
+ document.getElementById("payment-settings-status").textContent=data?.updated_at?"Last updated: "+new Date(data.updated_at).toLocaleString("en-IN"):"No payment settings saved yet.";
+ adminMsg.textContent="Payment settings loaded";
+}
+async function savePaymentSettings(event){
+ event.preventDefault();
+ const upi=document.getElementById("setting-upi-id").value.trim();
+ const qr=document.getElementById("setting-qr-url").value.trim();
+ const phone=document.getElementById("setting-support-phone").value.trim();
+ if(upi&&!/^[^\\s@]+@[^\\s@]+$/.test(upi)){adminMsg.textContent="Enter a valid UPI ID.";return;}
+ if(qr){try{const u=new URL(qr);if(u.protocol!=="https:")throw new Error();}catch{adminMsg.textContent="QR image URL must be a valid HTTPS URL.";return;}}
+ if(phone&&!/^\\+?[0-9 ()-]{8,20}$/.test(phone)){adminMsg.textContent="Enter a valid support phone number.";return;}
+ const {data:{user}}=await db.auth.getUser();
+ const payload={upi_id:upi||null,payment_qr_url:qr||null,support_phone:phone||null,updated_at:new Date().toISOString(),updated_by:user?.id||null};
+ const button=event.currentTarget.querySelector('button[type="submit"]');button.disabled=true;adminMsg.textContent="Saving payment settings…";
+ const {error}=await db.from("business_card_platform_settings").upsert({id:true,...payload},{onConflict:"id"});
+ button.disabled=false;
+ if(error){adminMsg.textContent="Could not save payment settings: "+error.message;return;}
+ document.getElementById("payment-settings-status").textContent="Saved successfully at "+new Date().toLocaleString("en-IN")+".";
+ adminMsg.textContent="Payment settings saved.";
+}
 async function loadCatalog(){
  adminMsg.textContent="Loading service catalogue…";
  const {data,error}=await db.from("services").select("id,name,slug,description,is_active,service_packages(id,name,price_inr,billing_period,is_active)").order("sort_order");
@@ -226,10 +253,10 @@ async function loadAdminUsers(){
 async function showSection(section){
  activeSection=section;
  document.querySelectorAll(".dw-admin-sidebar [data-section]").forEach(b=>b.classList.toggle("active",b.dataset.section===section));
- const ids=["clients-panel","cards-panel","orders-panel","store-panel","services-panel","nfc-panel","leads-panel","audit-panel","admin-users-panel"];ids.forEach(id=>{const el=document.getElementById(id);if(el)el.hidden=true;});
- const title=document.getElementById("section-title");const titles={"clients":"Client Dashboard / Overview","all-clients":"All Clients","store-orders":"Store Orders / Purchasing","cards":"Business Card Management","card-payments":"Business Card Payments","active-cards":"Active Cards","trial-cards":"Trial / Pending Cards","expired-cards":"Expired / Suspended Cards","store":"Store Management","orders":"Store Orders / Purchasing & Service Orders","nfc":"NFC Business Cards","without-nfc":"Without NFC Business Cards","services":"Services","service-payments":"Service Payments","payment-history":"Payment History","leads":"Client Leads & Enquiries","audit":"Admin Audit History","admin-users":"Admin Users"};
+ const ids=["clients-panel","cards-panel","orders-panel","store-panel","services-panel","nfc-panel","leads-panel","audit-panel","admin-users-panel","payment-settings-panel"];ids.forEach(id=>{const el=document.getElementById(id);if(el)el.hidden=true;});
+ const title=document.getElementById("section-title");const titles={"clients":"Client Dashboard / Overview","all-clients":"All Clients","store-orders":"Store Orders / Purchasing","cards":"Business Card Management","card-payments":"Business Card Payments","active-cards":"Active Cards","trial-cards":"Trial / Pending Cards","expired-cards":"Expired / Suspended Cards","store":"Store Management","orders":"Store Orders / Purchasing & Service Orders","nfc":"NFC Business Cards","without-nfc":"Without NFC Business Cards","services":"Services","service-payments":"Service Payments","payment-history":"Payment History","payment-settings":"Payment Settings","leads":"Client Leads & Enquiries","audit":"Admin Audit History","admin-users":"Admin Users"};
  title.textContent=titles[section]||"Admin Dashboard";
- if(section==="admin-users"){document.getElementById("admin-users-panel").hidden=false;await loadAdminUsers();return;}
+ if(section==="admin-users"){document.getElementById("admin-users-panel").hidden=false;await loadAdminUsers();return;}\n if(section==="payment-settings"){document.getElementById("payment-settings-panel").hidden=false;await loadPaymentSettings();return;}
  if(section==="leads"||section==="audit"){const panel=document.getElementById(section+"-panel");panel.hidden=false;if(section==="leads")await loadLeads();else await loadAudit();return;}
  if(section==="clients"||section==="all-clients"){document.getElementById("clients-panel").hidden=false;await loadClients(section==="clients");return;}
  if(["store","services"].includes(section)){document.getElementById(section+"-panel").hidden=false;if(section==="store")await loadStore();else await loadCatalog();return;}
@@ -275,7 +302,7 @@ document.getElementById("refresh").addEventListener("click",()=>showSection(acti
 document.getElementById("client-search").addEventListener("input",renderClients);
 document.getElementById("client-status-filter").addEventListener("change",renderClients);
 document.getElementById("order-search").addEventListener("input",renderOrders);
-document.getElementById("order-status-filter").addEventListener("change",renderOrders);
+document.getElementById("order-status-filter").addEventListener("change",renderOrders);\ndocument.getElementById("payment-settings-form").addEventListener("submit",savePaymentSettings);
 document.getElementById("login-form").addEventListener("submit",async e=>{e.preventDefault();msg.textContent="Signing in…";const f=new FormData(e.currentTarget);const {error}=await db.auth.signInWithPassword({email:f.get("email"),password:f.get("password")});if(error){msg.textContent="Sign in failed. Check credentials or admin access.";return;}await access();});
 document.getElementById("signout").addEventListener("click",async()=>{await db.auth.signOut();await access();});
 
