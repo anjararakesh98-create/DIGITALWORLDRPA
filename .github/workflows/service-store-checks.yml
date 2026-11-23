@@ -25,13 +25,14 @@ jobs:
           node --check js/service-store.js
           node --check js/admin.js
           node --check js/client-dashboard.js
+          node --check js/client-workspace.js
           node --check js/public-card.js
           node --check js/google-ads-conversions.js
       - name: Check inline JavaScript syntax
         run: |
           node --input-type=module - <<'JS'
           import fs from 'node:fs';
-          for (const file of ['create-account.html','client-login.html']) {
+          for (const file of ['create-account.html','client-login.html','client-dashboard.html','public-card.html']) {
             const html=fs.readFileSync(file,'utf8');
             for (const match of html.matchAll(/<script(?:\s[^>]*)?>([\s\S]*?)<\/script>/gi)) {
               if (match[1].trim()) new Function(match[1]);
