@@ -1,4 +1,4 @@
-name: Service Store checks
+name: Digital World site checks
 
 on:
   push:
@@ -24,6 +24,21 @@ jobs:
         run: |
           node --check js/service-store.js
           node --check js/admin.js
+          node --check js/client-dashboard.js
+          node --check js/public-card.js
+          node --check js/google-ads-conversions.js
+      - name: Check inline JavaScript syntax
+        run: |
+          node --input-type=module - <<'JS'
+          import fs from 'node:fs';
+          for (const file of ['create-account.html','client-login.html']) {
+            const html=fs.readFileSync(file,'utf8');
+            for (const match of html.matchAll(/<script(?:\\s[^>]*)?>([\\s\\S]*?)<\\/script>/gi)) {
+              if (match[1].trim()) new Function(match[1]);
+            }
+          }
+          console.log('Inline scripts are syntactically valid.');
+          JS
       - name: Check required pages and local assets
         run: |
           python - <<'PY'
@@ -37,16 +52,19 @@ jobs:
                   attrs = dict(attrs)
                   for key in ("src", "href"):
                       value = attrs.get(key, "")
-                      if value and not value.startswith(("http://", "https://", "mailto:", "tel:", "#", "data:")):
+                      if value and not value.startswith(("http://", "https://", "mailto:", "tel:", "#", "data:", "javascript:")):
                           self.refs.append(value.split("#", 1)[0].split("?", 1)[0])
-          for page in ("index.html", "store.html", "admin.html"):
+          pages = ("index.html","store.html","admin.html","business-card.html","create-account.html","client-login.html","client-dashboard.html","public-card.html")
+          for page in pages:
               path = Path(page)
               assert path.is_file(), f"Missing page: {page}"
               parser = Checker()
               parser.feed(path.read_text(encoding="utf-8"))
               for ref in parser.refs:
-                  if not ref or ref.startswith(("javascript:", "mailto:", "tel:")):
-                      continue
-                  assert Path(ref).is_file(), f"{page} references missing local asset: {ref}"
-          print("Required pages and local references are present.")
+                  if ref:
+                      assert Path(ref).is_file(), f"{page} references missing local asset: {ref}"
+          import xml.etree.ElementTree as ET
+          ET.parse("sitemap.xml")
+          assert "Sitemap: https://www.digitalworldrpa.in/sitemap.xml" in Path("robots.txt").read_text()
+          print("Required pages, local references, sitemap and robots file are valid.")
           PY
