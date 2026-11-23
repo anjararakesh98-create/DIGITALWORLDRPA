@@ -10,3 +10,33 @@
 @media(max-width:850px){.dw-admin-sidebar{max-height:none}.dw-admin-main{padding:18px 14px}#client-summary.dw-admin-summary{grid-template-columns:repeat(2,minmax(0,1fr))}}
 @media(max-width:560px){.admin-filterbar{grid-template-columns:1fr}.admin-filterbar select{width:100%}.dw-admin-top{align-items:flex-start;flex-direction:column}.dw-admin-top h1{font-size:22px}.verify-actions button,.verify-actions .admin-action-link{flex:1}}
 \n.admin-settings-form{display:grid;gap:14px;max-width:620px;margin:18px 0}.admin-settings-form label{display:grid;gap:7px;color:#33445f;font-weight:700;font-size:13px}.admin-settings-form input{min-height:44px;border:1px solid #d9e1ee;border-radius:9px;padding:10px 12px;font:inherit}.admin-settings-form button{justify-self:start;background:#082d6b;color:#fff;border:0;border-radius:9px;padding:12px 18px;font-weight:800;cursor:pointer}.admin-settings-form button:disabled{opacity:.6;cursor:wait}\n#payment-settings-panel[hidden]{display:none!important}\n\n#store-orders-panel[hidden]{display:none!important}\n
+
+/* Mobile admin navigation: keep the workspace visible without hiding menu items */
+@media(max-width:850px){
+  #dashboard{display:flex;flex-direction:column}
+  .dw-admin-sidebar{
+    display:grid;
+    grid-template-columns:repeat(2,minmax(0,1fr));
+    align-content:start;
+    gap:6px;
+    max-height:38vh;
+    overflow-y:auto;
+    overscroll-behavior:contain;
+    padding:12px;
+    border-bottom:3px solid #ff8a00;
+  }
+  .dw-admin-brand,.dw-admin-label{grid-column:1/-1;width:auto}
+  .dw-admin-sidebar button{min-width:0;min-height:42px;padding:9px 10px;line-height:1.25}
+  .dw-admin-spacer{display:none}
+  .dw-admin-main{width:100%;min-width:0}
+}
+@media(max-width:420px){
+  .dw-admin-sidebar{grid-template-columns:1fr;max-height:34vh}
+  .dw-admin-sidebar button{font-size:13px}
+  .dw-admin-summary,#client-summary.dw-admin-summary{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .dw-admin-stat{padding:12px}
+  .dw-admin-stat b{font-size:21px}
+  .order-title{align-items:flex-start;flex-direction:column}
+  .order-grid{grid-template-columns:1fr}
+  .order-card{padding:15px}
+}
