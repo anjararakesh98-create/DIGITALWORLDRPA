@@ -888,3 +888,72 @@ header.dw-header .dw-nav-links>a.dw-nav-admin{
 @media(prefers-reduced-motion:reduce){
   header.dw-header .dw-nav-links>a{transition:none!important}
 }
+
+
+/* Mobile navigation: compact right-side drawer; desktop navigation remains unchanged. */
+.dw-mobile-menu-toggle,.dw-menu-backdrop{display:none}
+@media(max-width:680px){
+  header.dw-header{position:relative;z-index:1000;overflow:visible;padding:10px 0!important}
+  header.dw-header .dw-nav{display:flex!important;align-items:center!important;justify-content:space-between!important;min-height:48px!important;height:auto!important;position:relative!important;padding:0!important}
+  header.dw-header .dw-brand{position:relative!important;top:auto!important;left:auto!important;width:116px!important;max-width:116px!important;height:48px!important;z-index:2}
+  header.dw-header .dw-brand img{width:100%!important;height:48px!important;max-height:48px!important;object-fit:contain!important;object-position:left center!important}
+  header.dw-header .dw-mobile-menu-toggle{
+    display:inline-flex!important;align-items:center!important;justify-content:center!important;gap:10px!important;
+    min-height:40px!important;margin:0 1px 0 auto!important;padding:8px 12px!important;
+    border:1px solid #f0d69a!important;border-radius:9px!important;background:#fff9e9!important;
+    color:#082d6b!important;font:800 12px/1 "DM Sans",sans-serif!important;
+    box-shadow:0 2px 8px rgba(8,45,107,.07)!important;cursor:pointer!important;z-index:1003!important;
+  }
+  .dw-menu-flow{display:inline-flex;align-items:center;gap:0;overflow:hidden;width:29px;height:16px;color:#ff8a00}
+  .dw-menu-flow i{font-style:normal;font-size:20px;font-weight:900;line-height:1;animation:dwArrowFlow 1.05s linear infinite;opacity:.25}
+  .dw-menu-flow i:nth-child(2){animation-delay:.18s}
+  .dw-menu-flow i:nth-child(3){animation-delay:.36s}
+  @keyframes dwArrowFlow{0%{transform:translateX(-7px);opacity:.2}45%{opacity:1}100%{transform:translateX(7px);opacity:.2}}
+  header.dw-header .dw-nav-links{
+    position:fixed!important;top:0!important;right:0!important;left:auto!important;
+    display:flex!important;flex-direction:column!important;align-items:stretch!important;justify-content:flex-start!important;
+    gap:7px!important;width:50vw!important;max-width:280px!important;min-width:190px!important;height:100dvh!important;
+    min-height:100dvh!important;margin:0!important;padding:84px 17px 24px!important;overflow-y:auto!important;
+    visibility:hidden!important;opacity:0!important;pointer-events:none!important;transform:translateX(105%)!important;
+    background:linear-gradient(180deg,#fffefa 0%,#fff8e8 100%)!important;border-left:1px solid #f0dfb6!important;
+    box-shadow:-14px 0 38px rgba(8,45,107,.16)!important;z-index:1002!important;
+    transition:transform .32s cubic-bezier(.22,.8,.25,1),opacity .22s ease,visibility .32s!important;
+  }
+  header.dw-header.dw-menu-open .dw-nav-links{
+    visibility:visible!important;opacity:1!important;pointer-events:auto!important;transform:translateX(0)!important;
+  }
+  header.dw-header .dw-nav-links>a,
+  header.dw-header .dw-nav-links>a:not(.dw-nav-business-card),
+  header.dw-header .dw-nav-links>a.dw-nav-business-card,
+  header.dw-header .dw-nav-links>a.dw-nav-admin{
+    position:relative!important;inset:auto!important;display:flex!important;flex-direction:column!important;
+    align-items:flex-start!important;justify-content:center!important;align-self:stretch!important;
+    width:100%!important;min-width:0!important;max-width:none!important;min-height:43px!important;height:auto!important;
+    margin:0!important;padding:10px 9px!important;border:0!important;border-bottom:1px solid rgba(8,45,107,.09)!important;
+    border-radius:0!important;background:transparent!important;color:#082d6b!important;
+    box-shadow:none!important;font-size:13px!important;font-weight:750!important;line-height:1.35!important;
+    text-align:left!important;text-transform:none!important;letter-spacing:0!important;white-space:normal!important;
+    transform:none!important;
+  }
+  header.dw-header .dw-nav-links>a.dw-nav-business-card{order:-1!important;min-height:57px!important;margin-bottom:8px!important;border:1px solid #f0d69a!important;border-radius:9px!important;background:#fff!important;align-items:flex-start!important;padding:10px!important}
+  header.dw-header .dw-nav-links>a.dw-nav-business-card .dw-nav-business-title{font-size:12px!important;color:#082d6b!important}
+  header.dw-header .dw-nav-links>a.dw-nav-business-card small{align-self:flex-start!important;color:#0756c8!important;font-size:9px!important}
+  header.dw-header .dw-nav-links>a.dw-nav-admin{color:#b85f00!important;font-weight:850!important}
+  header.dw-header .dw-nav-links>a:hover,header.dw-header .dw-nav-links>a:focus-visible{background:rgba(255,138,0,.08)!important;color:#a95700!important;outline-offset:2px}
+  header.dw-header .dw-menu-backdrop{
+    display:block!important;position:fixed!important;inset:0!important;width:100%!important;height:100%!important;
+    margin:0!important;padding:0!important;border:0!important;background:rgba(5,20,43,.38)!important;
+    opacity:0!important;visibility:hidden!important;pointer-events:none!important;z-index:1001!important;
+    transition:opacity .25s ease,visibility .25s ease!important;
+  }
+  header.dw-header.dw-menu-open .dw-menu-backdrop{opacity:1!important;visibility:visible!important;pointer-events:auto!important}
+  body.dw-menu-lock{overflow:hidden!important}
+}
+@media(max-width:380px){
+  header.dw-header .dw-brand{width:105px!important;max-width:105px!important}
+  header.dw-header .dw-mobile-menu-toggle{padding:8px 10px!important}
+}
+@media(prefers-reduced-motion:reduce){
+  .dw-menu-flow i{animation:none!important;opacity:1!important}
+  header.dw-header .dw-nav-links,header.dw-header .dw-menu-backdrop{transition:none!important}
+}
