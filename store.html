@@ -36,32 +36,21 @@
 <section class="order" id="order">
 <div class="order-layout">
 <div class="order-left">
-<div class="order-heading"><span class="eyebrow">START YOUR PROJECT</span><h2>Place a service request</h2><p>Complete your details and payment reference together. We will manually verify your payment before confirming the order.</p><p class="small">Your payment is not automatically verified. Digital World will check the credit in its PhonePe / bank account before approval.</p></div>
-<aside class="payment-card" id="payment-card">
-<div class="payment-card-head"><span class="eyebrow">UPI PAYMENT</span><h3>Scan &amp; pay</h3></div>
-<div class="payment-qr-wrap"><img id="payment-qr" src="images/digital-world-phonepe-qr.png" alt="Digital World PhonePe payment QR" width="180" height="180"><span id="payment-amount">Select a package to see the amount</span></div>
-<div class="payment-payee">Payee: <strong>ANJARA RAKESHBHAI PALJIBHAI</strong></div>
-<div class="payment-upi">UPI ID: <strong>9712424041@ybl</strong><button type="button" id="copy-upi">Copy</button></div>
-<div class="payment-fields">
-<label>UTR / Transaction ID<input name="utr_reference" id="utr-reference" form="order-form" required minlength="8" maxlength="64" autocomplete="off" placeholder="Enter transaction ID"></label>
-<label>Payment reference details<input name="reference_details" id="reference-details" form="order-form" required minlength="4" maxlength="500" autocomplete="off" placeholder="Payer name, time, UPI app / bank"></label>
-</div>
-<p class="payment-warning">Payment is pending until manually checked in PhonePe / bank.</p>
-</aside>
+<div class="order-heading"><span class="eyebrow">START YOUR PROJECT</span><h2>Send your enquiry</h2><p>Choose the service and package, enter your contact details, and submit. Your request will open directly in WhatsApp for Digital World.</p></div>
 </div>
 <form id="order-form" class="checkout-form">
-<div class="checkout-form-heading"><h3>Your project details</h3><p>Complete the required fields to submit your request.</p></div>
+<div class="checkout-form-heading"><h3>Your details</h3><p>We will contact you to discuss the package and next steps.</p></div>
 <div class="checkout-fields">
 <label>Your name<input name="customer_name" required minlength="2" maxlength="120" autocomplete="name"></label>
+<label>Mobile number<input name="customer_phone" type="tel" required minlength="8" maxlength="20" autocomplete="tel"></label>
 <label>Email address<input name="customer_email" type="email" required maxlength="254" autocomplete="email"></label>
-<label>Phone number<input name="customer_phone" type="tel" required minlength="8" maxlength="20" autocomplete="tel"></label>
-<label>Business name (optional)<input name="business_name" maxlength="160" autocomplete="organization"></label>
+<label>Business name<input name="business_name" required minlength="2" maxlength="160" autocomplete="organization"></label>
 <label>Selected service<select name="service_id" id="service-select" required><option value="">Choose a service</option></select></label>
 <label>Package<select name="package_id" id="package-select" required disabled><option value="">Choose a package</option></select></label>
-<label class="wide">Project details<textarea name="requirements" rows="3" maxlength="4000" placeholder="Tell us about your business, goals and requirements."></textarea></label>
+<label class="wide">Additional details (optional)<textarea name="requirements" rows="3" maxlength="1500" placeholder="Tell us briefly what you need."></textarea></label>
 </div>
-<button type="submit" id="submit" disabled>Book Order</button>
-<p class="form-foot">Your request and payment reference are submitted together. Payment remains pending until manual verification.</p>
+<button type="submit" id="submit" disabled>Submit Enquiry on WhatsApp</button>
+<p class="form-foot">No payment or transaction details are required here. We will contact you personally.</p>
 </form>
 </div>
 </section>
