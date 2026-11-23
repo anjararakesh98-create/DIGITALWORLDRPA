@@ -143,20 +143,20 @@ async function showSection(section){
  activeSection=section;
  document.querySelectorAll(".dw-admin-sidebar [data-section]").forEach(b=>b.classList.toggle("active",b.dataset.section===section));
  const ids=["clients-panel","cards-panel","orders-panel","store-panel","services-panel","nfc-panel"];ids.forEach(id=>{const el=document.getElementById(id);if(el)el.hidden=true;});
- const title=document.getElementById("section-title");const titles={"clients":"Client Dashboard / Overview","cards":"Business Card Management","card-payments":"Business Card Payments","active-cards":"Active Cards","trial-cards":"Trial / Pending Cards","expired-cards":"Expired / Suspended Cards","store":"Store Management","orders":"Store Orders / Purchasing & Service Orders","nfc":"NFC Business Cards","without-nfc":"Without NFC Business Cards","services":"Services","service-payments":"Service Payments","payment-history":"Payment History"};
+ const title=document.getElementById("section-title");const titles={"clients":"Client Dashboard / Overview","all-clients":"All Clients","store-orders":"Store Orders / Purchasing","cards":"Business Card Management","card-payments":"Business Card Payments","active-cards":"Active Cards","trial-cards":"Trial / Pending Cards","expired-cards":"Expired / Suspended Cards","store":"Store Management","orders":"Store Orders / Purchasing & Service Orders","nfc":"NFC Business Cards","without-nfc":"Without NFC Business Cards","services":"Services","service-payments":"Service Payments","payment-history":"Payment History"};
  title.textContent=titles[section]||"Admin Dashboard";
- if(section==="clients"){document.getElementById("clients-panel").hidden=false;await loadClients();return;}
+ if(section==="clients"||section==="all-clients"){document.getElementById("clients-panel").hidden=false;await loadClients(section==="clients");return;}
  if(["store","services"].includes(section)){document.getElementById(section+"-panel").hidden=false;if(section==="store")await loadStore();else await loadCatalog();return;}
- if(section==="nfc"){document.getElementById("cards-panel").hidden=false;await loadCards();return;}
- if(["cards","card-payments","active-cards","trial-cards","expired-cards","without-nfc"].includes(section)){document.getElementById("cards-panel").hidden=false;await loadCards();return;}
+ if(section==="nfc"||section==="store-orders"){document.getElementById("cards-panel").hidden=false;await loadCards();return;}
+ if(["cards","card-payments","active-cards","trial-cards","expired-cards","without-nfc","store-orders"].includes(section)){document.getElementById("cards-panel").hidden=false;await loadCards();return;}
  document.getElementById("orders-panel").hidden=false;await load();
 }
-async function loadClients(){
+async function loadClients(showOverview=true){
  adminMsg.textContent="Loading client portfolio…";
  const {data,error}=await db.from("business_cards").select("id,business_name,owner_name,contact_email,contact_mobile,plan_code,card_status,trial_ends_at,created_at").order("created_at",{ascending:false}).limit(250);
  if(error){adminMsg.textContent="Could not load clients: "+error.message;return;}
  const rows=data||[], active=rows.filter(x=>x.card_status==="active").length, trial=rows.filter(x=>x.card_status==="trial"&&new Date(x.trial_ends_at)>new Date()).length, due=rows.filter(x=>new Date(x.trial_ends_at)<=new Date()&&x.card_status!=="active").length;
- document.getElementById("client-summary").innerHTML='<div class="dw-admin-stat"><small>Total Clients</small><b>'+rows.length+'</b></div><div class="dw-admin-stat"><small>Active Cards</small><b>'+active+'</b></div><div class="dw-admin-stat"><small>Free Trial</small><b>'+trial+'</b></div><div class="dw-admin-stat"><small>Payment Due</small><b>'+due+'</b></div>';
+ document.getElementById("client-summary").innerHTML=showOverview?'<div class="dw-admin-stat"><small>Total Clients</small><b>'+rows.length+'</b></div><div class="dw-admin-stat"><small>Active Cards</small><b>'+active+'</b></div><div class="dw-admin-stat"><small>Free Trial</small><b>'+trial+'</b></div><div class="dw-admin-stat"><small>Payment Due</small><b>'+due+'</b></div>':"";
  const box=document.getElementById("clients-list");box.innerHTML="";
  rows.forEach(c=>{const el=document.createElement("article");el.className="order-card";el.innerHTML='<div class="order-title"><div><strong>'+esc(c.business_name)+'</strong><span>'+esc(c.owner_name)+' · '+esc(c.contact_email)+'</span></div><b class="status">'+esc(c.card_status)+'</b></div><div class="order-grid"><div><small>Mobile</small><b>'+esc(c.contact_mobile||"—")+'</b></div><div><small>Plan</small><b>'+esc(c.plan_code==="with-nfc"?"With NFC":"Without NFC")+'</b></div><div><small>Trial ends</small><b>'+esc(new Date(c.trial_ends_at).toLocaleDateString("en-IN"))+'</b></div></div>';box.append(el);});
  adminMsg.textContent=rows.length+" client accounts";
