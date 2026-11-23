@@ -4,17 +4,18 @@
 .dw-unified-logo{display:flex;align-items:center;flex:0 1 clamp(122px,13vw,174px);min-width:122px}
 .dw-unified-logo img{display:block;width:100%;height:58px;object-fit:contain;object-position:left center}
 .dw-unified-nav{margin-left:auto;min-width:0;flex:1 1 auto}
-.dw-unified-links{display:flex;flex-flow:row nowrap;align-items:center;justify-content:flex-end;gap:clamp(1px,.55vw,8px);white-space:nowrap}
+.dw-unified-links{display:flex;flex-flow:row nowrap;align-items:center;justify-content:flex-end;gap:clamp(1px,.45vw,7px);white-space:nowrap;min-width:0}
 .dw-unified-links a{display:inline-flex;flex:0 0 auto;align-items:center;justify-content:center;min-height:44px;padding:0 clamp(6px,.78vw,12px);border-radius:9px;color:#082d6b;text-decoration:none;font:700 clamp(11px,.92vw,13px)/1.15 "DM Sans",Inter,Arial,sans-serif;white-space:nowrap;letter-spacing:0;transition:background .18s ease,color .18s ease}
 .dw-unified-links a:hover,.dw-unified-links a[aria-current=page]{background:#fff2df;color:#a95700}
 .dw-unified-links a:focus-visible,.dw-unified-toggle:focus-visible,.dw-unified-close:focus-visible{outline:3px solid #00c2ff;outline-offset:2px}
 .dw-unified-toggle,.dw-unified-nav-head,.dw-unified-backdrop{display:none}
-@media(min-width:901px) and (max-width:1100px){
- .dw-unified-inner{width:calc(100% - 32px);gap:9px}
- .dw-unified-logo{flex-basis:122px;min-width:122px}
- .dw-unified-logo img{height:52px}
- .dw-unified-links{gap:1px}
- .dw-unified-links a{padding:0 6px;font-size:11px;min-height:42px}
+@media(min-width:901px) and (max-width:1150px){
+ .dw-unified-inner{width:calc(100% - 32px);gap:6px}
+ .dw-unified-logo{flex:0 0 112px;min-width:112px}
+ .dw-unified-logo img{height:50px}
+ .dw-unified-nav{flex:1 1 0}
+ .dw-unified-links{gap:0}
+ .dw-unified-links a{padding:0 4px;font-size:clamp(10px,.95vw,11px);min-height:42px;letter-spacing:-.1px}
 }
 @media(max-width:900px){
  .dw-unified-header{height:72px}
