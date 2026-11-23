@@ -716,3 +716,35 @@ a.dw-service-card:focus-visible{outline:3px solid var(--dw-orange);outline-offse
  .dw-nav-links>a.dw-nav-admin{margin-top:8px!important}
 }
 @media(prefers-reduced-motion:reduce){.dw-nav-links>a{transition:none!important}}
+
+
+/* Cache-busted final override: all primary nav links use the Store's light cream treatment */
+header.dw-header .dw-nav-links>a:not(.dw-nav-business-card):not(.dw-nav-admin),
+header .dw-nav-links>a.dw-nav-store{
+ background:linear-gradient(180deg,#fffefa 0%,#fff8e8 100%)!important;
+ color:#082d6b!important;border:1px solid #f0dfb6!important;
+ border-radius:9px!important;box-shadow:0 2px 7px rgba(8,45,107,.055),0 3px 8px rgba(217,155,24,.07)!important;
+ min-height:37px!important;padding:8px 13px!important;font-size:12px!important;font-weight:800!important;
+ text-transform:none!important;letter-spacing:0!important;
+}
+header.dw-header .dw-nav-links>a:not(.dw-nav-business-card):not(.dw-nav-admin):hover{
+ background:#fff2d2!important;transform:translateY(-2px)!important;
+ box-shadow:0 5px 12px rgba(217,155,24,.13)!important;
+}
+header.dw-header .dw-nav-links>a.dw-nav-business-card{
+ background:linear-gradient(180deg,#fffefa 0%,#fff6df 100%)!important;
+ color:#082d6b!important;border:1px solid #f0d69a!important;
+ box-shadow:0 2px 7px rgba(8,45,107,.055),0 3px 9px rgba(217,155,24,.09)!important;
+ min-width:172px!important;min-height:39px!important;padding:6px 13px!important;
+}
+header.dw-header .dw-nav-links>a.dw-nav-business-card .dw-nav-business-title{color:#082d6b!important;font-size:12px!important}
+header.dw-header .dw-nav-links>a.dw-nav-business-card small{color:#0756c8!important;font-size:9px!important;text-shadow:none!important;animation:none!important}
+header.dw-header .dw-nav-links>a.dw-nav-admin{
+ background:linear-gradient(180deg,#fffaf3 0%,#fff0df 100%)!important;
+ color:#a95500!important;border:1px solid #f2c28a!important;
+ box-shadow:0 2px 7px rgba(255,138,0,.09)!important;
+ min-height:37px!important;padding:8px 13px!important;font-size:12px!important;
+}
+@media(max-width:680px){
+ header.dw-header .dw-nav-links>a{width:max-content!important;max-width:100%!important}
+}
