@@ -169,9 +169,9 @@ async function savePaymentSettings(event){
  const upi=document.getElementById("setting-upi-id").value.trim();
  const qr=document.getElementById("setting-qr-url").value.trim();
  const phone=document.getElementById("setting-support-phone").value.trim();
- if(upi&&!/^[^\\s@]+@[^\\s@]+$/.test(upi)){adminMsg.textContent="Enter a valid UPI ID.";return;}
+ if(upi&&!/^[^\s@]+@[^\s@]+$/.test(upi)){adminMsg.textContent="Enter a valid UPI ID.";return;}
  if(qr){try{const u=new URL(qr);if(u.protocol!=="https:")throw new Error();}catch{adminMsg.textContent="QR image URL must be a valid HTTPS URL.";return;}}
- if(phone&&!/^\\+?[0-9 ()-]{8,20}$/.test(phone)){adminMsg.textContent="Enter a valid support phone number.";return;}
+ if(phone&&!/^\+?[0-9 ()-]{8,20}$/.test(phone)){adminMsg.textContent="Enter a valid support phone number.";return;}
  const {data:{user}}=await db.auth.getUser();
  const payload={upi_id:upi||null,payment_qr_url:qr||null,support_phone:phone||null,updated_at:new Date().toISOString(),updated_by:user?.id||null};
  const button=event.currentTarget.querySelector('button[type="submit"]');button.disabled=true;adminMsg.textContent="Saving payment settings…";
@@ -241,7 +241,7 @@ async function loadAdminUsers(){
    const reset=document.createElement("button");reset.type="button";reset.textContent="Set temporary password";
    reset.addEventListener("click",async()=>{const password=prompt("Enter a temporary password (minimum 8 characters). Share it securely with the account owner.");if(password===null)return;if(password.length<8){adminMsg.textContent="Password must be at least 8 characters.";return;}if(!confirm("Reset password for "+(x.full_name||"this admin")+"?"))return;reset.disabled=true;const ok=await adminAccountAction("reset_password",x.user_id,{password});reset.disabled=false;if(ok)await loadAdminUsers();});
    const email=document.createElement("button");email.type="button";email.className="secondary";email.textContent="Update email";
-   email.addEventListener("click",async()=>{const next=prompt("Enter the new login email address.");if(next===null)return;if(!/^[^\\s@]+@[^\\s@]+\\.[^\\s@]+$/.test(next.trim())){adminMsg.textContent="Enter a valid email address.";return;}if(!confirm("Update login email for "+(x.full_name||"this admin")+"?"))return;email.disabled=true;const ok=await adminAccountAction("update_email",x.user_id,{email:next.trim()});email.disabled=false;if(ok)await loadAdminUsers();});
+   email.addEventListener("click",async()=>{const next=prompt("Enter the new login email address.");if(next===null)return;if(!/^[^\s@]+@[^\s@]+\\.[^\s@]+$/.test(next.trim())){adminMsg.textContent="Enter a valid email address.";return;}if(!confirm("Update login email for "+(x.full_name||"this admin")+"?"))return;email.disabled=true;const ok=await adminAccountAction("update_email",x.user_id,{email:next.trim()});email.disabled=false;if(ok)await loadAdminUsers();});
    const remove=document.createElement("button");remove.type="button";remove.className="secondary";remove.textContent="Delete admin account";
    remove.addEventListener("click",async()=>{if(!confirm("Permanently delete this Admin account? This cannot be undone."))return;remove.disabled=true;const ok=await adminAccountAction("delete_user",x.user_id);remove.disabled=false;if(ok)await loadAdminUsers();});
    actions.append(reset,email,remove);
