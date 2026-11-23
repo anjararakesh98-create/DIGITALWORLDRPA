@@ -82,7 +82,7 @@
 #customerSignupLayer #dwRegMobile{font-variant-numeric:tabular-nums;letter-spacing:.4px}
 #customerSignupLayer .dw-signup-footnote{color:#4b5563}
 </style>
-</head>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script></head>
 <body>
 <div id="publicSite">
 <div class="drawer-backdrop" id="drawerBackdrop" onclick="closeDrawer()"></div>
@@ -318,10 +318,12 @@ function exportData(type){let data=type==='merchants'?merchants:type==='leads'?l
    <div class="dw-customer-field"><label>BUSINESS NAME *</label><input id="dwRegBusiness" required maxlength="100" placeholder="Enter your business name"></div>
    <div class="dw-customer-field"><label>OWNER NAME *</label><input id="dwRegOwner" required maxlength="80" placeholder="Enter owner full name"></div>
    <div class="dw-customer-field"><label>MOBILE NUMBER *</label><input id="dwRegMobile" required type="tel" inputmode="numeric" autocomplete="tel" pattern="[0-9+ -]{10,15}" placeholder="Enter mobile number"></div>
-   <div class="dw-customer-field"><label>GMAIL ADDRESS *</label><input id="dwRegEmail" type="email" required autocomplete="email" placeholder="Enter your Gmail address"><small class="hint">Use your Gmail address. Email verification will be connected with Supabase later.</small></div>
+   <div class="dw-customer-field"><label>EMAIL ADDRESS * (LOGIN ID)</label><input id="dwRegEmail" type="email" required autocomplete="email" placeholder="Enter your email address"><small class="hint">This email address will be your permanent login ID. Mobile number cannot be used to log in.</small></div>
+   <div class="dw-customer-field"><label>CREATE PASSWORD *</label><input id="dwRegPassword" type="password" required minlength="8" autocomplete="new-password" placeholder="Create a password (minimum 8 characters)"></div>
+   <input type="hidden" id="dwSelectedPlan" value="without-nfc">
    <div id="dwSignupMessage" class="dw-signup-message" role="status" aria-live="polite" hidden></div>
-   <button class="btn btn-primary full dw-signup-submit" id="dwSignupSubmit" type="submit">Submit Card Request <span>→</span></button>
-  </form><p class="dw-signup-footnote">No payment is required to submit your request. Your client workspace will open after submission.</p>
+   <button class="btn btn-primary full dw-signup-submit" id="dwSignupSubmit" type="submit">Create Account & Business Card <span>→</span></button>
+  </form><p class="dw-signup-footnote">No payment is required to submit your request. A verification email may be sent. After verifying, log in with your email and password to manage your card.</p>
  </div></main>
 </div>
 <div id="customerDashboardLayer" class="hidden">
@@ -351,40 +353,30 @@ const dwCustomerSections=[
  ['preview','▣','Card Preview','Preview your digital card']
 ];
 let dwCustomer=JSON.parse(localStorage.getItem('dw_customer_account')||'null');
-function openCustomerSignup(plan){document.getElementById('publicSite').classList.add('hidden');document.getElementById('loginScreen').classList.add('hidden');document.getElementById('customerDashboardLayer').classList.add('hidden');document.getElementById('customerSignupLayer').classList.remove('hidden');window.scrollTo(0,0)}
+function openCustomerSignup(plan){if(plan)document.getElementById('dwSelectedPlan').value=plan;document.getElementById('publicSite').classList.add('hidden');document.getElementById('loginScreen').classList.add('hidden');document.getElementById('customerDashboardLayer').classList.add('hidden');document.getElementById('customerSignupLayer').classList.remove('hidden');window.scrollTo(0,0)}
 function closeCustomerLayers(){document.getElementById('customerSignupLayer').classList.add('hidden');document.getElementById('customerDashboardLayer').classList.add('hidden');document.getElementById('publicSite').classList.remove('hidden');window.scrollTo(0,0)}
-function createCustomerAccount(e){
+async function createCustomerAccount(e){
 e.preventDefault();
 const form=e.currentTarget, button=document.getElementById('dwSignupSubmit'), message=document.getElementById('dwSignupMessage');
 const showMessage=(text,kind)=>{message.textContent=text;message.className='dw-signup-message '+kind;message.hidden=false};
 const phone=document.getElementById('dwRegMobile').value.trim();
-if(!/^[0-9+ -]{10,15}$/.test(phone)){showMessage('Please enter a valid mobile number (10 to 15 characters).','error');document.getElementById('dwRegMobile').focus();return}
 const business=document.getElementById('dwRegBusiness').value.trim();
 const owner=document.getElementById('dwRegOwner').value.trim();
 const email=document.getElementById('dwRegEmail').value.trim().toLowerCase();
-if(!business||!owner||!email){showMessage('Please complete all required fields, including your Gmail address.','error');return}
-if(!/^[a-z0-9._%+-]+@gmail\.com$/i.test(email)){showMessage('Please enter a valid Gmail address ending in @gmail.com.','error');document.getElementById('dwRegEmail').focus();return}
-button.disabled=true;button.textContent='Submitting…';
+const password=document.getElementById('dwRegPassword').value;
+const plan=document.getElementById('dwSelectedPlan').value==='with-nfc'?'with-nfc':'without-nfc';
+if(!/^[0-9+ -]{10,15}$/.test(phone)){showMessage('Please enter a valid mobile number.','error');return}
+if(!business||!owner||!email||password.length<8){showMessage('Complete all required fields. Password must be at least 8 characters.','error');return}
+if(!/^[^\\s@]+@[^\\s@]+\\.[^\\s@]+$/.test(email)){showMessage('Enter a valid email address.','error');return}
+button.disabled=true;button.textContent='Creating secure account…';
 try{
- const createdAt=new Date().toISOString();
- const request={id:'DW-CARD-'+String(Date.now()).slice(-8),merchant:business,owner,phone,email,plan:'7-Day Free Trial',amount:0,reference:'',status:'Pending Card Setup',trialDays:7,validity:'7-Day Free Trial',requestType:'Digital Card Signup',createdAt};
- const savedOrders=JSON.parse(localStorage.getItem('dw_orders')||'[]');
- if(!Array.isArray(savedOrders)) throw new Error('Saved request data is invalid.');
- savedOrders.push(request);
- const customer={business,owner,mobile:phone,email,createdAt,data:{}};
- localStorage.setItem('dw_orders',JSON.stringify(savedOrders));
- localStorage.setItem('dw_customer_account',JSON.stringify(customer));
- orders=savedOrders;dwCustomer=customer;
- showMessage('Your card request has been submitted successfully. Request ID: '+request.id,'success');
- form.reset();
- setTimeout(()=>showCustomerDashboard(),900);
-}catch(err){
- console.error('Card request submission failed:',err);
- showMessage('We could not save your request in this browser. Please check browser storage settings and try again. Your request has not been submitted.','error');
- button.disabled=false;button.textContent='Submit Card Request →';
+ const db=window.supabase.createClient('https://lvbesvjeiaxudhsajyuc.supabase.co','sb_publishable_EhHpIAzaJC3y7MBkcv0wDQ_Vz8kXsnR');
+ const {data,error}=await db.auth.signUp({email,password,options:{emailRedirectTo:location.origin+location.pathname.replace(/[^/]*$/,'')+'client-login.html',data:{full_name:owner,business_name:business,mobile:phone,plan_code:plan}}});
+ if(error)throw error;
+ if(data.session){showMessage('Account created. Opening your Client Workspace…','success');setTimeout(()=>location.href='client-workspace.html',700);}
+ else{showMessage('Account created. Check your email and verify the address. Then open Client Login and sign in with this email and password.','success');button.disabled=false;button.textContent='Create Account & Business Card →';}
+}catch(err){console.error(err);showMessage(err.message||'Account could not be created. Please try again.','error');button.disabled=false;button.textContent='Create Account & Business Card →';}
 }
-}
-
 function renderCustomerHome(){
  const c=document.getElementById('dwCustomerContent');
  c.innerHTML=`<div class="dw-customer-grid dw-dashboard-summary"><div class="dw-overview-card"><span>GET STARTED</span><b>Complete your profile</b><small>Add your logo, business details and contact information from the left menu.</small></div><div class="dw-overview-card"><span>BUILD YOUR CARD</span><b>Add services & products</b><small>Show customers what your business offers.</small></div><div class="dw-overview-card"><span>SHARE YOUR BUSINESS</span><b>QR & public link</b><small>Your live QR code and public card link will be enabled after backend integration.</small></div></div>`;
