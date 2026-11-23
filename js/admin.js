@@ -256,7 +256,8 @@ async function showSection(section){
  const ids=["clients-panel","cards-panel","orders-panel","store-panel","services-panel","nfc-panel","leads-panel","audit-panel","admin-users-panel","payment-settings-panel"];ids.forEach(id=>{const el=document.getElementById(id);if(el)el.hidden=true;});
  const title=document.getElementById("section-title");const titles={"clients":"Client Dashboard / Overview","all-clients":"All Clients","store-orders":"Store Orders / Purchasing","cards":"Business Card Management","card-payments":"Business Card Payments","active-cards":"Active Cards","trial-cards":"Trial / Pending Cards","expired-cards":"Expired / Suspended Cards","store":"Store Management","orders":"Store Orders / Purchasing & Service Orders","nfc":"NFC Business Cards","without-nfc":"Without NFC Business Cards","services":"Services","service-payments":"Service Payments","payment-history":"Payment History","payment-settings":"Payment Settings","leads":"Client Leads & Enquiries","audit":"Admin Audit History","admin-users":"Admin Users"};
  title.textContent=titles[section]||"Admin Dashboard";
- if(section==="admin-users"){document.getElementById("admin-users-panel").hidden=false;await loadAdminUsers();return;}\n if(section==="payment-settings"){document.getElementById("payment-settings-panel").hidden=false;await loadPaymentSettings();return;}
+ if(section==="admin-users"){document.getElementById("admin-users-panel").hidden=false;await loadAdminUsers();return;}
+ if(section==="payment-settings"){document.getElementById("payment-settings-panel").hidden=false;await loadPaymentSettings();return;}
  if(section==="leads"||section==="audit"){const panel=document.getElementById(section+"-panel");panel.hidden=false;if(section==="leads")await loadLeads();else await loadAudit();return;}
  if(section==="clients"||section==="all-clients"){document.getElementById("clients-panel").hidden=false;await loadClients(section==="clients");return;}
  if(["store","services"].includes(section)){document.getElementById(section+"-panel").hidden=false;if(section==="store")await loadStore();else await loadCatalog();return;}
@@ -302,7 +303,8 @@ document.getElementById("refresh").addEventListener("click",()=>showSection(acti
 document.getElementById("client-search").addEventListener("input",renderClients);
 document.getElementById("client-status-filter").addEventListener("change",renderClients);
 document.getElementById("order-search").addEventListener("input",renderOrders);
-document.getElementById("order-status-filter").addEventListener("change",renderOrders);\ndocument.getElementById("payment-settings-form").addEventListener("submit",savePaymentSettings);
+document.getElementById("order-status-filter").addEventListener("change",renderOrders);
+document.getElementById("payment-settings-form").addEventListener("submit",savePaymentSettings);
 document.getElementById("login-form").addEventListener("submit",async e=>{e.preventDefault();msg.textContent="Signing in…";const f=new FormData(e.currentTarget);const {error}=await db.auth.signInWithPassword({email:f.get("email"),password:f.get("password")});if(error){msg.textContent="Sign in failed. Check credentials or admin access.";return;}await access();});
 document.getElementById("signout").addEventListener("click",async()=>{await db.auth.signOut();await access();});
 
