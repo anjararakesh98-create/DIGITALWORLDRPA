@@ -367,7 +367,7 @@ const password=document.getElementById('dwRegPassword').value;
 const plan=document.getElementById('dwSelectedPlan').value==='with-nfc'?'with-nfc':'without-nfc';
 if(!/^[0-9+ -]{10,15}$/.test(phone)){showMessage('Please enter a valid mobile number.','error');return}
 if(!business||!owner||!email||password.length<8){showMessage('Complete all required fields. Password must be at least 8 characters.','error');return}
-if(!/^[^\\s@]+@[^\\s@]+\\.[^\\s@]+$/.test(email)){showMessage('Enter a valid email address.','error');return}
+if(email.includes(" ")||!email.includes("@")||!email.split("@")[1]?.includes(".")){showMessage("Enter a valid email address.","error");return}
 button.disabled=true;button.textContent='Creating secure account…';
 try{
  const db=window.supabase.createClient('https://lvbesvjeiaxudhsajyuc.supabase.co','sb_publishable_EhHpIAzaJC3y7MBkcv0wDQ_Vz8kXsnR');
