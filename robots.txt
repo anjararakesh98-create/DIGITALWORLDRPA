@@ -1,4 +1,9 @@
 User-agent: *
 Allow: /
+Disallow: /admin.html
+Disallow: /client-login.html
+Disallow: /client-dashboard.html
+Disallow: /create-account.html
+Disallow: /public-card.html
 
 Sitemap: https://www.digitalworldrpa.in/sitemap.xml
