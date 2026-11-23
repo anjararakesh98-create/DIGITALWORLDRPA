@@ -107,6 +107,38 @@ async function loadCards(){
  });
  adminMsg.textContent=filtered.length+" business cards · "+(data||[]).length+" total";
 }
+async function loadStore(){
+ const [{data:cards,error:cardError},{data:orders,error:orderError}] = await Promise.all([
+  db.from("business_cards").select("id,plan_code,card_status"),
+  db.from("orders").select("id,status,payment_status")
+ ]);
+ if(cardError||orderError){adminMsg.textContent="Could not load Store summary.";return;}
+ const all=cards||[],os=orders||[];
+ document.getElementById("store-summary").innerHTML='<div class="dw-admin-stat"><small>Digital Card Orders</small><b>'+all.length+'</b></div><div class="dw-admin-stat"><small>With NFC</small><b>'+all.filter(x=>x.plan_code==="with-nfc").length+'</b></div><div class="dw-admin-stat"><small>Without NFC</small><b>'+all.filter(x=>x.plan_code==="without-nfc").length+'</b></div><div class="dw-admin-stat"><small>Service Orders</small><b>'+os.length+'</b></div>';
+ adminMsg.textContent="Store summary loaded";
+}
+async function loadCatalog(){
+ adminMsg.textContent="Loading service catalogue…";
+ const {data,error}=await db.from("services").select("id,name,slug,description,is_active,service_packages(id,name,price_inr,billing_period,is_active)").order("sort_order");
+ if(error){adminMsg.textContent="Could not load service catalogue: "+error.message;return;}
+ const box=document.getElementById("services-list");box.innerHTML="";
+ (data||[]).forEach(service=>{
+  const el=document.createElement("article");el.className="order-card";
+  const head=document.createElement("div");head.className="order-title";head.innerHTML='<div><strong>'+esc(service.name)+'</strong><span>'+esc(service.slug)+'</span></div><b class="status">'+(service.is_active?"ACTIVE":"INACTIVE")+'</b>';el.append(head);
+  const desc=document.createElement("p");desc.className="requirements";desc.textContent=service.description||"";el.append(desc);
+  (service.service_packages||[]).forEach(pkg=>{
+   const row=document.createElement("div");row.className="payment-details";
+   const name=document.createElement("b");name.textContent=pkg.name+" · "+pkg.billing_period;
+   const price=document.createElement("input");price.type="number";price.min="0";price.step="1";price.value=pkg.price_inr;price.setAttribute("aria-label","Package price in INR");
+   const active=document.createElement("label");const check=document.createElement("input");check.type="checkbox";check.checked=pkg.is_active;active.append(check,document.createTextNode(" Active"));
+   const save=document.createElement("button");save.textContent="Save package";save.addEventListener("click",async()=>{const amount=Number(price.value);if(!Number.isSafeInteger(amount)||amount<0){adminMsg.textContent="Enter a valid package price.";return;}save.disabled=true;const {error}=await db.from("service_packages").update({price_inr:amount,is_active:check.checked,updated_at:new Date().toISOString()}).eq("id",pkg.id);if(error){adminMsg.textContent="Could not update package: "+error.message;save.disabled=false;return;}adminMsg.textContent="Package updated.";await loadCatalog();});
+   row.append(name,price,active,save);el.append(row);
+  });
+  const toggle=document.createElement("button");toggle.className="secondary";toggle.textContent=service.is_active?"Deactivate service":"Activate service";toggle.addEventListener("click",async()=>{const {error}=await db.from("services").update({is_active:!service.is_active,updated_at:new Date().toISOString()}).eq("id",service.id);if(error){adminMsg.textContent="Could not update service: "+error.message;return;}await loadCatalog();});
+  el.append(toggle);box.append(el);
+ });
+ adminMsg.textContent=(data||[]).length+" services loaded";
+}
 async function showSection(section){
  activeSection=section;
  document.querySelectorAll(".dw-admin-sidebar [data-section]").forEach(b=>b.classList.toggle("active",b.dataset.section===section));
@@ -114,7 +146,7 @@ async function showSection(section){
  const title=document.getElementById("section-title");const titles={"clients":"Client Dashboard / Overview","cards":"Business Card Management","card-payments":"Business Card Payments","active-cards":"Active Cards","trial-cards":"Trial / Pending Cards","expired-cards":"Expired / Suspended Cards","store":"Store Management","orders":"Store Orders / Purchasing & Service Orders","nfc":"NFC Business Cards","without-nfc":"Without NFC Business Cards","services":"Services","service-payments":"Service Payments","payment-history":"Payment History"};
  title.textContent=titles[section]||"Admin Dashboard";
  if(section==="clients"){document.getElementById("clients-panel").hidden=false;await loadClients();return;}
- if(["store","services"].includes(section)){document.getElementById(section+"-panel").hidden=false;return;}
+ if(["store","services"].includes(section)){document.getElementById(section+"-panel").hidden=false;if(section==="store")await loadStore();else await loadCatalog();return;}
  if(section==="nfc"){document.getElementById("cards-panel").hidden=false;await loadCards();return;}
  if(["cards","card-payments","active-cards","trial-cards","expired-cards","without-nfc"].includes(section)){document.getElementById("cards-panel").hidden=false;await loadCards();return;}
  document.getElementById("orders-panel").hidden=false;await load();
