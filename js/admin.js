@@ -1,7 +1,8 @@
 (() => {
 const URL="https://lvbesvjeiaxudhsajyuc.supabase.co", KEY="sb_publishable_EhHpIAzaJC3y7MBkcv0wDQ_Vz8kXsnR";
 const db=window.supabase.createClient(URL,KEY), login=document.getElementById("login-panel"), dash=document.getElementById("dashboard");
-const msg=document.getElementById("login-message"), adminMsg=document.getElementById("admin-message"), list=document.getElementById("orders-list");\nlet activeSection="clients";
+const msg=document.getElementById("login-message"), adminMsg=document.getElementById("admin-message"), list=document.getElementById("orders-list");
+let activeSection="clients";
 const esc=s=>String(s??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
 const rupees=n=>n==null?"Quote required":new Intl.NumberFormat("en-IN",{style:"currency",currency:"INR",maximumFractionDigits:0}).format(n);
 async function access(){
@@ -91,7 +92,8 @@ async function loadCards(){
  const {data,error}=await db.from("business_cards").select("id,slug,business_name,owner_name,contact_email,contact_mobile,plan_code,card_status,trial_ends_at,valid_until,created_at,business_card_payments(id,amount_inr,shipping_inr,utr_reference,reference_details,payment_status,created_at)").order("created_at",{ascending:false}).limit(200);
  if(error){adminMsg.textContent="Could not load business cards: "+error.message;return;}
  const cards=document.getElementById("cards-list");cards.innerHTML="";
- const filtered=(data||[]).filter(c=>{const p=(c.business_card_payments||[]).sort((a,b)=>new Date(b.created_at)-new Date(a.created_at))[0];const due=c.trial_ends_at&&new Date(c.trial_ends_at)<new Date()&&c.card_status!=="active";if(activeSection==="card-payments")return p&&p.payment_status==="pending_verification";if(activeSection==="active-cards")return c.card_status==="active";if(activeSection==="trial-cards")return c.card_status==="trial"&&!due;if(activeSection==="expired-cards")return ["expired","suspended"].includes(c.card_status)||due;if(activeSection==="nfc")return c.plan_code==="with-nfc";if(activeSection==="without-nfc")return c.plan_code==="without-nfc";return true;});\n filtered.forEach(c=>{
+ const filtered=(data||[]).filter(c=>{const p=(c.business_card_payments||[]).sort((a,b)=>new Date(b.created_at)-new Date(a.created_at))[0];const due=c.trial_ends_at&&new Date(c.trial_ends_at)<new Date()&&c.card_status!=="active";if(activeSection==="card-payments")return p&&p.payment_status==="pending_verification";if(activeSection==="active-cards")return c.card_status==="active";if(activeSection==="trial-cards")return c.card_status==="trial"&&!due;if(activeSection==="expired-cards")return ["expired","suspended"].includes(c.card_status)||due;if(activeSection==="nfc")return c.plan_code==="with-nfc";if(activeSection==="without-nfc")return c.plan_code==="without-nfc";return true;});
+ filtered.forEach(c=>{
   const p=(c.business_card_payments||[]).sort((a,b)=>new Date(b.created_at)-new Date(a.created_at))[0];
   const el=document.createElement("article");el.className="order-card";
   const publicUrl=new URL("public-card.html?card="+encodeURIComponent(c.slug),location.href).href;
