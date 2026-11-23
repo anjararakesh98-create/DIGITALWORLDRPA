@@ -750,231 +750,141 @@ header.dw-header .dw-nav-links>a.dw-nav-admin{
 }
 
 
-/* Mobile-first compact header: logo + business-card CTA, then two-line text navigation. */
-@media (max-width:680px){
-  .dw-header{
+
+
+/* Final responsive header: no mobile drawer, simple four-column text navigation. */
+@media(max-width:680px){
+  header.dw-header{
     height:auto!important;
     min-height:0!important;
-    padding:9px 0 7px;
+    padding:10px 0 8px!important;
   }
-  .dw-nav{
-    height:auto!important;
-    display:grid!important;
-    grid-template-columns:repeat(3,minmax(0,1fr));
-    grid-template-rows:auto auto auto;
-    align-items:center;
-    column-gap:10px;
-    row-gap:5px;
-  }
-  .dw-brand{
-    grid-column:1;
-    grid-row:1;
-    width:100%!important;
-    max-width:132px;
-    justify-self:start;
-  }
-  .dw-brand img{
-    width:100%;
-    max-height:54px;
-    object-fit:contain;
-  }
-  .dw-menu-toggle{display:none!important}
-  .dw-nav-links{
-    display:contents!important;
-  }
-  .dw-nav-links>a{
-    display:inline-flex!important;
-    align-items:center;
-    justify-content:center;
-    justify-self:stretch;
-    align-self:center!important;
-    width:auto!important;
-    max-width:100%!important;
-    min-width:0!important;
-    min-height:34px!important;
-    margin:0!important;
-    padding:7px 3px!important;
-    border:0!important;
-    border-radius:0!important;
-    background:transparent!important;
-    color:#344b68!important;
-    box-shadow:none!important;
-    font-size:12px!important;
-    line-height:1.25!important;
-    font-weight:750!important;
-    letter-spacing:0!important;
-    text-transform:none!important;
-    white-space:nowrap;
-    transition:color .18s ease,background .18s ease!important;
-  }
-  .dw-nav-links>a:focus-visible{
-    outline:2px solid #ff8a00!important;
-    outline-offset:1px;
-    border-radius:5px!important;
-  }
-  .dw-nav-links>a:not(.dw-nav-business-card):hover,
-  .dw-nav-links>a:not(.dw-nav-business-card):active{
-    color:#a95700!important;
-    background:#fff7e9!important;
-    transform:none!important;
-  }
-  .dw-nav-links>a.dw-nav-business-card{
-    grid-column:2 / 4;
-    grid-row:1;
-    justify-self:stretch;
-    align-self:center!important;
-    display:flex!important;
-    flex-direction:column;
-    align-items:center;
-    justify-content:center;
-    gap:3px;
-    min-width:0!important;
-    min-height:43px!important;
-    margin:0!important;
-    padding:5px 8px!important;
-    border:1px solid #f0d69a!important;
-    border-radius:9px!important;
-    background:linear-gradient(180deg,#fffefa 0%,#fff6df 100%)!important;
-    color:#082d6b!important;
-    box-shadow:0 2px 7px rgba(8,45,107,.055),0 3px 9px rgba(217,155,24,.09)!important;
-  }
-  .dw-nav-links>a.dw-nav-business-card .dw-nav-business-title{
-    font-size:11px!important;
-    line-height:1.15;
-    white-space:normal;
-    text-align:center;
-  }
-  .dw-nav-links>a.dw-nav-business-card small{
-    font-size:8px!important;
-    line-height:1.1;
-    letter-spacing:.025em!important;
-    color:#0756c8!important;
-    white-space:nowrap;
-    animation:none!important;
-  }
-  .dw-nav-links>a.dw-nav-store{grid-column:1;grid-row:2}
-  .dw-nav-links>a:nth-child(3){grid-column:2;grid-row:2}
-  .dw-nav-links>a:nth-child(4){grid-column:3;grid-row:2}
-  .dw-nav-links>a:nth-child(5){grid-column:1;grid-row:3}
-  .dw-nav-links>a:nth-child(6){grid-column:2;grid-row:3}
-  .dw-nav-links>a.dw-nav-admin{
-    grid-column:3;
-    grid-row:3;
-    margin:0!important;
-    padding:7px 2px!important;
-    min-height:34px!important;
-    border:0!important;
-    border-radius:0!important;
-    background:transparent!important;
-    color:#a95700!important;
-    box-shadow:none!important;
-    font-size:11px!important;
-    font-weight:800!important;
-  }
-  .dw-nav-links>a.dw-nav-admin span{display:none!important}
-}
-@media (max-width:360px){
-  .dw-nav{grid-template-columns:repeat(3,minmax(0,1fr));column-gap:7px}
-  .dw-nav-links>a{font-size:11px!important}
-  .dw-nav-links>a.dw-nav-business-card .dw-nav-business-title{font-size:10px!important}
-}
-
-
-/* Keep the semantic nav element intact while placing the CTA beside the logo. */
-@media (max-width:680px){
-  .dw-nav{
+  header.dw-header .dw-nav{
     position:relative!important;
     display:block!important;
     height:auto!important;
-    padding-top:0!important;
+    min-height:0!important;
+    padding:0!important;
   }
-  .dw-brand{
+  header.dw-header .dw-brand{
     position:absolute!important;
     top:0!important;
     left:0!important;
-    width:118px!important;
-    max-width:118px!important;
+    display:block!important;
+    width:112px!important;
+    max-width:112px!important;
+    height:46px!important;
     z-index:2;
   }
-  .dw-nav-links{
+  header.dw-header .dw-brand img{
+    display:block!important;
+    width:100%!important;
+    height:46px!important;
+    max-height:46px!important;
+    object-fit:contain!important;
+    object-position:left center!important;
+  }
+  header.dw-header .dw-menu-toggle{display:none!important}
+  header.dw-header .dw-nav-links{
     position:relative!important;
     display:grid!important;
-    grid-template-columns:repeat(3,minmax(0,1fr))!important;
-    grid-template-rows:auto auto!important;
-    align-items:center!important;
-    gap:2px 3px!important;
-    padding-top:49px!important;
+    grid-template-columns:repeat(4,minmax(0,1fr))!important;
+    grid-auto-rows:minmax(32px,auto)!important;
+    gap:3px 2px!important;
+    width:100%!important;
+    height:auto!important;
+    min-height:0!important;
+    margin:0!important;
+    padding:53px 0 0!important;
+    overflow:visible!important;
+    visibility:visible!important;
+    opacity:1!important;
+    transform:none!important;
+    background:transparent!important;
+    border:0!important;
+    box-shadow:none!important;
   }
-  .dw-nav-links>a.dw-nav-business-card{
+  header.dw-header .dw-nav-links>a.dw-nav-business-card{
     position:absolute!important;
     top:0!important;
-    left:126px!important;
+    left:121px!important;
     right:0!important;
-    width:auto!important;
-    min-height:42px!important;
-  }
-  .dw-nav-links>a.dw-nav-store{grid-column:1!important;grid-row:1!important}
-  .dw-nav-links>a:nth-child(3){grid-column:2!important;grid-row:1!important}
-  .dw-nav-links>a:nth-child(4){grid-column:3!important;grid-row:1!important}
-  .dw-nav-links>a:nth-child(5){grid-column:1!important;grid-row:2!important}
-  .dw-nav-links>a:nth-child(6){grid-column:2!important;grid-row:2!important}
-  .dw-nav-links>a.dw-nav-admin{grid-column:3!important;grid-row:2!important}
-}
-@media(max-width:380px){
-  .dw-brand{width:108px!important;max-width:108px!important}
-  .dw-nav-links>a.dw-nav-business-card{left:115px!important}
-}
-
-
-/* Highest-specificity mobile nav layout overrides, after all legacy navigation styles. */
-@media(max-width:680px){
-  header.dw-header .dw-nav-links>a:not(.dw-nav-business-card){
     display:flex!important;
+    width:auto!important;
+    min-width:0!important;
+    max-width:none!important;
+    min-height:43px!important;
+    height:auto!important;
+    margin:0!important;
+    padding:5px 8px!important;
+    flex-direction:column!important;
+    align-items:center!important;
+    justify-content:center!important;
+    gap:3px!important;
+    border:1px solid #f0d69a!important;
+    border-radius:8px!important;
+    background:#fff9e9!important;
+    color:#082d6b!important;
+    box-shadow:0 2px 6px rgba(8,45,107,.06)!important;
+    text-align:center!important;
+  }
+  header.dw-header .dw-nav-links>a.dw-nav-business-card .dw-nav-business-title{
+    color:#082d6b!important;
+    font-size:11px!important;
+    line-height:1.15!important;
+    font-weight:800!important;
+    white-space:normal!important;
+  }
+  header.dw-header .dw-nav-links>a.dw-nav-business-card small{
+    color:#0756c8!important;
+    font-size:8px!important;
+    line-height:1.1!important;
+    white-space:nowrap!important;
+    animation:none!important;
+  }
+  header.dw-header .dw-nav-links>a:not(.dw-nav-business-card){
+    position:static!important;
+    display:flex!important;
+    align-items:center!important;
+    justify-content:center!important;
     width:100%!important;
     min-width:0!important;
     max-width:100%!important;
-    justify-self:stretch!important;
-    justify-content:center!important;
+    min-height:32px!important;
+    height:auto!important;
     margin:0!important;
-    padding:7px 2px!important;
-    min-height:34px!important;
+    padding:5px 1px!important;
     border:0!important;
-    border-radius:5px!important;
+    border-radius:4px!important;
     background:transparent!important;
     color:#344b68!important;
     box-shadow:none!important;
     font-size:11px!important;
-    font-weight:750!important;
+    line-height:1.2!important;
+    font-weight:700!important;
+    letter-spacing:0!important;
     text-transform:none!important;
+    text-align:center!important;
     white-space:nowrap!important;
-  }
-  header.dw-header .dw-nav-links>a.dw-nav-business-card{
-    width:auto!important;
-    min-width:0!important;
-    max-width:none!important;
-    margin:0!important;
-    justify-self:stretch!important;
-    align-self:center!important;
-  }
-  header.dw-header .dw-nav-links>a.dw-nav-admin{
-    width:100%!important;
-    min-width:0!important;
-    max-width:100%!important;
-    min-height:34px!important;
-    margin:0!important;
-    padding:7px 2px!important;
-    border:0!important;
-    border-radius:5px!important;
-    background:transparent!important;
-    color:#a95700!important;
-    box-shadow:none!important;
-    font-size:11px!important;
-    font-weight:800!important;
-  }
-  header.dw-header .dw-nav-links>a:not(.dw-nav-business-card):hover,
-  header.dw-header .dw-nav-links>a:not(.dw-nav-business-card):active{
-    background:#fff7e9!important;
-    color:#a95700!important;
     transform:none!important;
   }
+  header.dw-header .dw-nav-links>a:not(.dw-nav-business-card):hover,
+  header.dw-header .dw-nav-links>a:not(.dw-nav-business-card):focus-visible,
+  header.dw-header .dw-nav-links>a:not(.dw-nav-business-card):active{
+    color:#a95700!important;
+    background:#fff7e9!important;
+    outline-offset:1px!important;
+  }
+  header.dw-header .dw-nav-links>a.dw-nav-admin{
+    color:#a95700!important;
+    font-weight:800!important;
+  }
+}
+@media(max-width:380px){
+  header.dw-header .dw-brand{width:102px!important;max-width:102px!important}
+  header.dw-header .dw-nav-links>a.dw-nav-business-card{left:110px!important}
+  header.dw-header .dw-nav-links>a:not(.dw-nav-business-card){font-size:10px!important}
+}
+@media(prefers-reduced-motion:reduce){
+  header.dw-header .dw-nav-links>a{transition:none!important}
 }
