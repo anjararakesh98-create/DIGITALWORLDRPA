@@ -36,15 +36,17 @@ async function renderAdminPanel(section){
  if(section)adminSection=section;
  const host=$('content');
  host.innerHTML='<div class="panel">Loading Admin Panel…</div>';
- const [{data:orders, error:oe},{data:payments,error:pe},{data:cards,error:ce},{data:cardPayments,error:cpe},{data:profiles,error:profe},{data:settings}] = await Promise.all([
+ const [{data:orders, error:oe},{data:payments,error:pe},{data:cards,error:ce},{data:cardPayments,error:cpe},{data:profiles,error:profe},{data:settings},{data:leads,error:le},{data:audit,error:ae}] = await Promise.all([
   db.from('orders').select('*').order('created_at',{ascending:false}),
   db.from('payment_transactions').select('*').order('created_at',{ascending:false}),
   db.from('business_cards').select('*').order('created_at',{ascending:false}),
   db.from('business_card_payments').select('*').order('created_at',{ascending:false}),
   db.from('user_profiles').select('user_id,full_name,role,created_at').order('created_at',{ascending:false}),
-  db.from('business_card_platform_settings').select('*').eq('id',true).maybeSingle()
+  db.from('business_card_platform_settings').select('*').eq('id',true).maybeSingle(),
+  db.from('business_card_leads').select('*').order('created_at',{ascending:false}).limit(500),
+  db.from('admin_audit_logs').select('*').order('created_at',{ascending:false}).limit(300)
  ]);
- if(oe||pe||ce||cpe||profe){host.innerHTML='<div class="notice">Admin data could not be loaded: '+esc([oe,pe,ce,cpe,profe].filter(Boolean).map(x=>x.message).join(' · '))+'</div>';return}
+ if(oe||pe||ce||cpe||profe||le||ae){host.innerHTML='<div class="notice">Admin data could not be loaded: '+esc([oe,pe,ce,cpe,profe,le,ae].filter(Boolean).map(x=>x.message).join(' · '))+'</div>';return}
  const pending=(payments||[]).filter(x=>x.status==='pending_verification');
  const verified=(payments||[]).filter(x=>x.status==='verified');
  const paidOrders=(orders||[]).filter(x=>x.payment_status==='paid');
@@ -67,10 +69,14 @@ async function renderAdminPanel(section){
   body='<div class="panel"><div class="admin-head"><h2>'+adminSection+' ('+list.length+')</h2><input class="admin-search" placeholder="Search business, owner, mobile…" oninput="filterAdminRows(this.value)"></div><div class="admin-table-wrap"><table class="table" id="adminDataTable"><tr><th>Business</th><th>Owner</th><th>Mobile</th><th>Email</th><th>Plan</th><th>Status</th><th>Registered</th><th>Manage</th></tr>'+list.map(x=>'<tr><td>'+esc(x.business_name)+'</td><td>'+esc(x.owner_name)+'</td><td>'+esc(x.contact_mobile||'—')+'</td><td>'+esc(x.contact_email)+'</td><td>'+esc(x.plan_code)+'</td><td><span class="status-tag '+(x.card_status==='active'?'good':'')+'">'+esc(x.card_status)+'</span></td><td>'+dateIn(x.created_at)+'</td><td><button class="btn alt" onclick="editClient(\''+x.id+'\')">Edit</button></td></tr>').join('')+'</table></div></div>';
  }else if(adminSection==='Payment Ledger'){
   body='<div class="panel"><h2>Payment Ledger</h2><h3>Store Orders</h3>'+paymentTable(payments,orders)+'</div><div class="panel section"><h3>Business Card Plan Payments</h3>'+cardPaymentTable(cardPayments,cards)+'</div>';
+ }else if(adminSection==='Client Leads'){
+  body='<div class="panel"><div class="admin-head"><h2>Client Leads & Enquiries ('+(leads||[]).length+')</h2><input class="admin-search" placeholder="Search name, phone, email…" oninput="filterAdminRows(this.value)"></div><div class="admin-table-wrap"><table class="table" id="adminDataTable"><tr><th>Business / Card</th><th>Customer</th><th>Phone</th><th>Email</th><th>Message</th><th>Date</th></tr>'+leads.map(x=>{const owner=cards.find(z=>z.id===x.card_id)||{};return '<tr><td>'+esc(owner.business_name||'—')+'</td><td>'+esc(x.name||'—')+'</td><td>'+esc(x.phone||'—')+'</td><td>'+esc(x.email||'—')+'</td><td>'+esc(x.message||'—')+'</td><td>'+dateIn(x.created_at)+'</td></tr>'}).join('')+'</table></div></div>';
+ }else if(adminSection==='Audit History'){
+  body='<div class="panel"><div class="admin-head"><h2>Admin Audit History</h2><input class="admin-search" placeholder="Search action, entity, details…" oninput="filterAdminRows(this.value)"></div><div class="admin-table-wrap"><table class="table" id="adminDataTable"><tr><th>Date</th><th>Admin User</th><th>Action</th><th>Entity</th><th>Record ID</th><th>Details</th></tr>'+audit.map(x=>'<tr><td>'+dateIn(x.created_at)+'</td><td>'+esc(x.actor_user_id||'—')+'</td><td>'+esc(x.action||'—')+'</td><td>'+esc(x.entity_type||'—')+'</td><td>'+esc(x.entity_id||'—')+'</td><td>'+esc(JSON.stringify(x.details||{}))+'</td></tr>').join('')+'</table></div><p class="muted">Showing latest 300 admin audit events.</p></div>';
  }else if(adminSection==='Payment Settings'){
   body='<div class="panel"><h2>Payment Settings</h2>'+field('UPI ID','admin_upi',settings?.upi_id||'')+field('Payment QR image URL','admin_qr',settings?.payment_qr_url||'','url')+field('Support phone','admin_support',settings?.support_phone||'9712424041')+'<button class="btn" onclick="saveAdminSettings()">Save payment settings</button></div>';
  }
- host.innerHTML='<div class="admin-shell"><aside class="admin-side"><h2 style="font-size:16px;color:var(--navy);padding:4px 9px">Digital World Admin</h2>'+nav('MAIN', [['Overview','Overview']])+nav('STORE PURCHASE',[['Purchase Dashboard','Purchase Dashboard'],['Pending Payments','Pending Payments'],['All Orders','All Orders'],['Paid Orders','Paid Orders']])+nav('BUSINESS CARDS',[['All Clients','All Clients'],['Active Clients','Active Clients'],['Free Trial','Free Trial'],['Expired Clients','Expired Clients']])+nav('PAYMENT MANAGEMENT',[['Payment Ledger','Payment Ledger']])+nav('SETTINGS',[['Payment Settings','Payment Settings']])+'</aside><section class="admin-main">'+body+'</section></div>';
+ host.innerHTML='<div class="admin-shell"><aside class="admin-side"><h2 style="font-size:16px;color:var(--navy);padding:4px 9px">Digital World Admin</h2>'+nav('MAIN', [['Overview','Overview']])+nav('STORE PURCHASE',[['Purchase Dashboard','Purchase Dashboard'],['Pending Payments','Pending Payments'],['All Orders','All Orders'],['Paid Orders','Paid Orders']])+nav('BUSINESS CARDS',[['All Clients','All Clients'],['Active Clients','Active Clients'],['Free Trial','Free Trial'],['Expired Clients','Expired Clients']])+nav('PAYMENT MANAGEMENT',[['Payment Ledger','Payment Ledger'],['Client Leads','Client Leads'],['Audit History','Audit History']])+nav('SETTINGS',[['Payment Settings','Payment Settings']])+'</aside><section class="admin-main">'+body+'</section></div>';
 }
 function orderTable(rows,payments){
  if(!rows?.length)return '<p class="muted">No store orders found.</p>';
@@ -112,7 +118,6 @@ async function saveClientEdit(id){
  if(readError){alert(readError.message);return}
  const d=x.public_data||{};
  const patch={business_name:$('f_edit_business').value.trim(),owner_name:$('f_edit_owner').value.trim(),contact_mobile:$('f_edit_mobile').value.trim(),contact_email:$('f_edit_email').value.trim(),public_data:{...d,website:$('f_edit_website').value.trim(),address:$('f_edit_address').value.trim(),about:$('edit_about').value.trim()},updated_at:new Date().toISOString()};
- const trial=$('f_edit_trial').value;if(trial)patch.trial_ends_at=new Date(trial+'T23:59:59').toISOString();
  const {error}=await db.from('business_cards').update(patch).eq('id',id);
  if(error){alert(error.message);return}
  alert('Client card details updated.');await renderAdminPanel('All Clients');
