@@ -878,3 +878,49 @@ header.dw-header .dw-nav-links>a.dw-nav-admin{
   .dw-nav-links>a{font-size:11px!important}
   .dw-nav-links>a.dw-nav-business-card .dw-nav-business-title{font-size:10px!important}
 }
+
+
+/* Keep the semantic nav element intact while placing the CTA beside the logo. */
+@media (max-width:680px){
+  .dw-nav{
+    position:relative!important;
+    display:block!important;
+    height:auto!important;
+    padding-top:0!important;
+  }
+  .dw-brand{
+    position:absolute!important;
+    top:0!important;
+    left:0!important;
+    width:118px!important;
+    max-width:118px!important;
+    z-index:2;
+  }
+  .dw-nav-links{
+    position:relative!important;
+    display:grid!important;
+    grid-template-columns:repeat(3,minmax(0,1fr))!important;
+    grid-template-rows:auto auto!important;
+    align-items:center!important;
+    gap:2px 3px!important;
+    padding-top:49px!important;
+  }
+  .dw-nav-links>a.dw-nav-business-card{
+    position:absolute!important;
+    top:0!important;
+    left:126px!important;
+    right:0!important;
+    width:auto!important;
+    min-height:42px!important;
+  }
+  .dw-nav-links>a.dw-nav-store{grid-column:1!important;grid-row:1!important}
+  .dw-nav-links>a:nth-child(3){grid-column:2!important;grid-row:1!important}
+  .dw-nav-links>a:nth-child(4){grid-column:3!important;grid-row:1!important}
+  .dw-nav-links>a:nth-child(5){grid-column:1!important;grid-row:2!important}
+  .dw-nav-links>a:nth-child(6){grid-column:2!important;grid-row:2!important}
+  .dw-nav-links>a.dw-nav-admin{grid-column:3!important;grid-row:2!important}
+}
+@media(max-width:380px){
+  .dw-brand{width:108px!important;max-width:108px!important}
+  .dw-nav-links>a.dw-nav-business-card{left:115px!important}
+}
