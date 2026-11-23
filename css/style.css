@@ -924,3 +924,57 @@ header.dw-header .dw-nav-links>a.dw-nav-admin{
   .dw-brand{width:108px!important;max-width:108px!important}
   .dw-nav-links>a.dw-nav-business-card{left:115px!important}
 }
+
+
+/* Highest-specificity mobile nav layout overrides, after all legacy navigation styles. */
+@media(max-width:680px){
+  header.dw-header .dw-nav-links>a:not(.dw-nav-business-card){
+    display:flex!important;
+    width:100%!important;
+    min-width:0!important;
+    max-width:100%!important;
+    justify-self:stretch!important;
+    justify-content:center!important;
+    margin:0!important;
+    padding:7px 2px!important;
+    min-height:34px!important;
+    border:0!important;
+    border-radius:5px!important;
+    background:transparent!important;
+    color:#344b68!important;
+    box-shadow:none!important;
+    font-size:11px!important;
+    font-weight:750!important;
+    text-transform:none!important;
+    white-space:nowrap!important;
+  }
+  header.dw-header .dw-nav-links>a.dw-nav-business-card{
+    width:auto!important;
+    min-width:0!important;
+    max-width:none!important;
+    margin:0!important;
+    justify-self:stretch!important;
+    align-self:center!important;
+  }
+  header.dw-header .dw-nav-links>a.dw-nav-admin{
+    width:100%!important;
+    min-width:0!important;
+    max-width:100%!important;
+    min-height:34px!important;
+    margin:0!important;
+    padding:7px 2px!important;
+    border:0!important;
+    border-radius:5px!important;
+    background:transparent!important;
+    color:#a95700!important;
+    box-shadow:none!important;
+    font-size:11px!important;
+    font-weight:800!important;
+  }
+  header.dw-header .dw-nav-links>a:not(.dw-nav-business-card):hover,
+  header.dw-header .dw-nav-links>a:not(.dw-nav-business-card):active{
+    background:#fff7e9!important;
+    color:#a95700!important;
+    transform:none!important;
+  }
+}
