@@ -93,7 +93,7 @@
 <link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400..800&display=swap" onload="this.onload=null;this.rel='stylesheet'">
 <noscript><link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400..800&display=swap" rel="stylesheet"></noscript>
 <link rel="preload" as="image" href="images/digital-world-logo.webp" fetchpriority="high">
-<link rel="stylesheet" href="css/style.css?v=mobile-nav-6">
+<link rel="stylesheet" href="css/style.css?v=mobile-drawer-7">
 <script type="application/ld+json">
 {
   "@context": "https://schema.org",
@@ -112,10 +112,11 @@
 <body id="top" class="dw-site">
 <header class="dw-header"><div class="dw-container dw-nav">
 <a class="dw-brand" href="#top" aria-label="Digital World home"><img src="images/digital-world-logo.webp" alt="Digital World — Creative. Digital. Growth." width="900" height="525" decoding="async"></a>
-<nav class="dw-nav-links" aria-label="Main navigation">
+<button class="dw-mobile-menu-toggle" type="button" aria-expanded="false" aria-controls="dw-mobile-navigation"><span>Menu</span><span class="dw-menu-flow" aria-hidden="true"><i>›</i><i>›</i><i>›</i></span></button>
+<nav class="dw-nav-links" id="dw-mobile-navigation" aria-label="Main navigation">
 <a class="dw-nav-business-card" href="business-card.html" aria-label="Create your Digital World business card"><span class="dw-nav-business-title">Create Business Card</span><small>✦ 7 DAYS FREE TRIAL ✦</small></a><a class="dw-nav-store" href="store.html" aria-label="Open Digital World Store">Store</a><a href="#services">Services</a><a href="#work">Our Work</a><a href="#about">About</a><a href="#contact">Contact</a>
 <a class="dw-nav-admin" href="admin.html" aria-label="Admin Login">Admin Login <span>↗</span></a>
-</nav></div></header>
+</nav></div><button class="dw-menu-backdrop" type="button" aria-label="Close navigation menu" tabindex="-1"></button></header>
 <main>
 <section class="dw-hero">
 <div class="dw-container dw-hero-grid">
@@ -175,6 +176,21 @@
 <a class="dw-whatsapp-float" href="https://wa.me/919712424041" target="_blank" rel="noopener noreferrer" aria-label="Chat with Digital World on WhatsApp"><svg viewBox="0 0 32 32" role="img" aria-hidden="true"><path d="M16 3.2A12.75 12.75 0 0 0 5.05 22.48L3.3 28.8l6.48-1.7A12.75 12.75 0 1 0 16 3.2zm0 23.2a10.4 10.4 0 0 1-5.3-1.45l-.38-.22-3.85 1.01 1.03-3.75-.25-.39A10.4 10.4 0 1 1 16 26.4zm5.72-7.8c-.31-.16-1.84-.91-2.13-1.01-.29-.11-.5-.16-.71.16-.21.32-.82 1.02-1 1.23-.18.21-.37.24-.68.08-.32-.16-1.34-.49-2.55-1.57-.94-.84-1.57-1.88-1.75-2.2-.18-.32-.02-.49.14-.65.14-.14.32-.37.47-.55.16-.18.21-.32.32-.53.1-.21.05-.4-.03-.56-.08-.16-.71-1.71-.98-2.34-.26-.61-.52-.53-.71-.54h-.61c-.21 0-.55.08-.84.4-.29.32-1.1 1.07-1.1 2.61s1.13 3.03 1.29 3.24c.16.21 2.22 3.39 5.38 4.75.75.32 1.34.51 1.8.65.76.24 1.45.21 1.99.13.61-.09 1.84-.75 2.1-1.47.26-.72.26-1.34.18-1.47-.08-.13-.29-.21-.61-.37z" fill="currentColor"/></svg></a>
 <script src="js/google-ads-conversions.js" defer></script>
 <script>
+
+document.addEventListener('DOMContentLoaded',()=>{
+  const header=document.querySelector('.dw-header');
+  const toggle=document.querySelector('.dw-mobile-menu-toggle');
+  const nav=document.querySelector('#dw-mobile-navigation');
+  const backdrop=document.querySelector('.dw-menu-backdrop');
+  if(!header||!toggle||!nav||!backdrop)return;
+  const closeMenu=()=>{header.classList.remove('dw-menu-open');toggle.setAttribute('aria-expanded','false');document.body.classList.remove('dw-menu-lock');};
+  const openMenu=()=>{header.classList.add('dw-menu-open');toggle.setAttribute('aria-expanded','true');document.body.classList.add('dw-menu-lock');};
+  toggle.addEventListener('click',()=>toggle.getAttribute('aria-expanded')==='true'?closeMenu():openMenu());
+  backdrop.addEventListener('click',closeMenu);
+  nav.addEventListener('click',event=>{if(event.target.closest('a'))closeMenu();});
+  document.addEventListener('keydown',event=>{if(event.key==='Escape')closeMenu();});
+  window.addEventListener('resize',()=>{if(window.innerWidth>680)closeMenu();});
+});
 document.addEventListener('DOMContentLoaded',()=>{const y=document.getElementById('year');if(y)y.textContent=new Date().getFullYear();});
 document.addEventListener('click',(event)=>{
   const link=event.target.closest('a[href]');
