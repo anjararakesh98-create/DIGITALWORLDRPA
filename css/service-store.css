@@ -244,3 +244,9 @@
 }
 @media(max-width:380px){.store-nav{grid-template-columns:repeat(2,minmax(0,1fr))!important}.hero-plan{padding:14px 11px!important}.hero-plan a{white-space:normal!important}}
 \n\n/* Shared Digital World navigation stylesheet is loaded separately on all customer pages. */\n
+/* WhatsApp enquiry form: no payment/checkout UI */
+#order-form.checkout-form{grid-column:1/-1;max-width:760px;margin:0 auto;width:100%;height:auto}
+.order-layout{display:block}
+.order-left{display:block;height:auto}
+#order-form.checkout-form .checkout-fields{grid-template-columns:repeat(2,minmax(0,1fr))}
+@media(max-width:560px){#order-form.checkout-form .checkout-fields{grid-template-columns:1fr}}
