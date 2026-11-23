@@ -1,0 +1,31 @@
+create or replace function public.handle_dw_auth_user_created()
+returns trigger
+language plpgsql
+security definer
+set search_path = ''
+as $function$
+declare
+ v_business text := coalesce(nullif(trim(new.raw_user_meta_data ->> 'business_name'),''),'My Business');
+ v_owner text := coalesce(nullif(trim(new.raw_user_meta_data ->> 'full_name'),''),'Business Owner');
+ v_slug text;
+ v_plan text := case when new.raw_user_meta_data ->> 'plan_code'='with-nfc' then 'with-nfc' else 'without-nfc' end;
+ v_public_data jsonb := '{}'::jsonb;
+begin
+ insert into public.user_profiles(user_id,full_name,role) values(new.id,v_owner,'customer') on conflict(user_id) do nothing;
+ if v_plan='with-nfc' then
+  v_public_data := jsonb_build_object('shipping_address',jsonb_build_object(
+   'address',left(trim(coalesce(new.raw_user_meta_data ->> 'shipping_address','')),400),
+   'city',left(trim(coalesce(new.raw_user_meta_data ->> 'shipping_city','')),80),
+   'state',left(trim(coalesce(new.raw_user_meta_data ->> 'shipping_state','')),80),
+   'pincode',left(trim(coalesce(new.raw_user_meta_data ->> 'shipping_pincode','')),6)
+  ));
+ end if;
+ if nullif(trim(new.raw_user_meta_data ->> 'business_name'),'') is not null then
+  v_slug := trim(both '-' from regexp_replace(lower(v_business),'[^a-z0-9]+','-','g')) || '-' || substr(replace(new.id::text,'-',''),1,6);
+  insert into public.business_cards(user_id,slug,business_name,owner_name,contact_email,contact_mobile,plan_code,public_data)
+  values(new.id,v_slug,v_business,v_owner,lower(new.email),nullif(new.raw_user_meta_data ->> 'mobile',''),v_plan,v_public_data)
+  on conflict(user_id) do nothing;
+ end if;
+ return new;
+end;
+$function$;
