@@ -8,6 +8,7 @@ let orderRows=[];
 const esc=s=>String(s??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
 const rupees=n=>n==null?"Quote required":new Intl.NumberFormat("en-IN",{style:"currency",currency:"INR",maximumFractionDigits:0}).format(n);
 const ADMIN_EMAIL="anjararakesh98@gmail.com";
+const waPhone=value=>{const digits=String(value||"").replace(/\\D/g,"");return digits.length===10?"91"+digits:digits;};
 
 const passwordInput=document.getElementById("admin-password");
 document.getElementById("show-admin-password").addEventListener("change",e=>{passwordInput.type=e.target.checked?"text":"password";});
