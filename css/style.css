@@ -503,6 +503,7 @@ button,input,select,textarea{font:inherit}
 .dw-site{--dw-muted:#53657d}
 .dw-eyebrow{color:#a95700}
 .dw-hero h1 em,.dw-section-heading h2 em,.dw-about-section h2 em,.dw-package-section h2 em,.dw-contact-heading h2 em{color:#b85f00}
+.dw-hero h1 em{color:#ff8a00}
 .dw-price-label{color:#a95700}
 .dw-logo-caption b{color:#a95700}
 .dw-faq-list{max-width:900px;margin:0 auto;display:grid;gap:12px}
