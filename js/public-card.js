@@ -1,24 +1,15 @@
 const db=window.supabase.createClient("https://lvbesvjeiaxudhsajyuc.supabase.co","sb_publishable_EhHpIAzaJC3y7MBkcv0wDQ_Vz8kXsnR");
-const slug=new URLSearchParams(location.search).get("card");
-const esc=s=>String(s??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
-function safeUrl(value,allowImage=false){
- try{
-  const u=new URL(String(value||"").trim());
-  const allowed=allowImage?["https:"]:["https:","http:"];
-  return allowed.includes(u.protocol)?u.href:"";
- }catch{return "";}
-}
-async function load(){
- const el=document.getElementById("card");
- if(!slug||slug.length>120){el.textContent="Business card not found.";return;}
- const {data,error}=await db.from("public_business_cards").select("*").eq("slug",slug).maybeSingle();
- if(error||!data){el.textContent="This business card is unavailable.";return;}
- const d=data.public_data||{},logo=safeUrl(d.logo,true),website=safeUrl(d.website),wa=String(d.whatsapp||"").replace(/\D/g,"");
- const details=[["Category",d.category],["Address",d.address],["Website",website?'<a href="'+esc(website)+'" target="_blank" rel="noopener noreferrer">'+esc(website)+'</a>':""],["WhatsApp",wa?esc(d.whatsapp):""]].filter(x=>x[1]);
- el.innerHTML=(logo?'<img src="'+esc(logo)+'" alt="'+esc(data.business_name)+' logo" style="max-width:120px;max-height:90px;object-fit:contain">':"")+
- '<div class="brand">Digital World</div><h1>'+esc(data.business_name)+'</h1><h3>'+esc(data.owner_name)+'</h3><p>'+esc(d.tagline||"")+'</p><p>'+esc(d.about||"")+'</p><div class="grid">'+details.map(x=>'<div class="tile"><b>'+esc(x[0])+'</b>'+x[1]+'</div>').join("")+'</div>'+
- ["services","products"].filter(k=>Array.isArray(d[k])&&d[k].length).map(k=>'<section class="section"><h2>'+(k==="services"?"Services":"Products & Pricing")+'</h2><ul>'+d[k].map(x=>"<li>"+esc(x)+"</li>").join("")+"</ul></section>").join("")+
- '<div class="row section">'+(wa?'<a class="btn" href="https://wa.me/'+esc(wa)+'" target="_blank" rel="noopener noreferrer">WhatsApp</a>':"")+(website?'<a class="btn secondary" href="'+esc(website)+'" target="_blank" rel="noopener noreferrer">Website</a>':"")+'</div>';
- document.title=data.business_name+" | Digital World";
-}
+const slug=new URLSearchParams(location.search).get('card'),src=new URLSearchParams(location.search).get('src');
+const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const safeUrl=v=>{try{const u=new URL(String(v||'').trim());return ['https:','http:'].includes(u.protocol)?u.href:''}catch{return ''}};
+const waNum=v=>String(v||'').replace(/\D/g,'');
+async function track(id,event){if(!id)return;try{await db.from('business_card_analytics').insert({card_id:id,event_type:event})}catch{}}
+async function load(){const el=document.getElementById('card');if(!slug||slug.length>120){el.textContent='Business card not found.';return;}const {data,error}=await db.from('public_business_cards').select('*').eq('slug',slug).maybeSingle();if(error||!data){el.textContent='This business card is unavailable.';return;}const d=data.public_data||{},logo=safeUrl(d.logo||d.logo_url),website=safeUrl(d.website),wa=waNum(d.whatsapp||data.contact_mobile),mobile=waNum(data.contact_mobile),email=String(data.contact_email||'');
+const link=(label,url,event)=>url?`<a class="btn secondary" href="${esc(url)}" target="_blank" rel="noopener noreferrer" data-event="${event}">${label}</a>`:'';
+const list=(key,title,split=false)=>{const arr=Array.isArray(d[key])?d[key]:String(d[key]||'').split('\n').filter(Boolean);if(!arr.length)return '';return `<section class="section"><h2>${title}</h2><div class="grid">${arr.map(item=>{const parts=typeof item==='string'?item.split('|').map(x=>x.trim()):[item.name||'',item.description||'',item.price||'',item.url||''];const [name,desc,price,url]=parts;const href=safeUrl(url);return `<article class="tile"><b>${esc(name)}</b>${desc?`<p>${esc(desc)}</p>`:''}${price?`<strong>${esc(price)}</strong>`:''}${href?`<p><a href="${esc(href)}" target="_blank" rel="noopener">View details</a></p>`:''}</article>`}).join('')}</div></section>`};
+const gallery=Array.isArray(d.gallery)?d.gallery:String(d.gallery||'').split('\n').filter(Boolean);const galleryHtml=gallery.length?`<section class="section"><h2>Gallery</h2><div class="grid">${gallery.map(x=>{const u=safeUrl(String(x).split('|')[0]);return u?`<img src="${esc(u)}" alt="${esc(data.business_name)} gallery" loading="lazy" style="width:100%;max-height:240px;object-fit:cover;border-radius:12px">`:''}).join('')}</div></section>`:'';
+const socials=[['Instagram',safeUrl(d.instagram)],['Facebook',safeUrl(d.facebook)],['YouTube',safeUrl(d.youtube)],['LinkedIn',safeUrl(d.linkedin)],['Google Reviews',safeUrl(d.reviews)],['Google Maps',safeUrl(d.maps)],['Website',website]].filter(x=>x[1]);
+el.innerHTML=`<article class="business-card"><div class="brand">Digital World</div>${logo?`<img src="${esc(logo)}" alt="${esc(data.business_name)} logo" style="display:block;max-width:120px;max-height:100px;object-fit:contain;margin:12px auto">`:''}<h1>${esc(data.business_name)}</h1><h3>${esc(data.owner_name)}</h3><p class="tagline">${esc(d.tagline||'')}</p><p>${esc(d.about||'')}</p><div class="grid">${d.category?`<div class="tile"><b>Category</b>${esc(d.category)}</div>`:''}${d.address?`<div class="tile"><b>Address</b>${esc(d.address)}</div>`:''}${d.hours?`<div class="tile"><b>Working Hours</b>${esc(d.hours)}</div>`:''}</div><div class="row section">${mobile?`<a class="btn" href="tel:+${mobile}" data-event="call">Call Now</a>`:''}${wa?`<a class="btn" href="https://wa.me/${wa}" target="_blank" rel="noopener" data-event="whatsapp">WhatsApp</a>`:''}${email?`<a class="btn secondary" href="mailto:${esc(email)}" data-event="email">Email</a>`:''}</div>${list('services','Services')}${list('products','Products & Pricing')}${galleryHtml}${list('portfolio','Our Portfolio')}<section class="section"><h2>Connect With Us</h2><div class="row">${socials.map(([n,u])=>link(n,u,n==='Website'?'website':'share')).join('')}</div></section><section class="section"><h2>Send an Enquiry</h2><form id="leadForm"><label>Your Name *</label><input name="name" required maxlength="100"><label>Mobile Number</label><input name="phone" maxlength="30"><label>Email</label><input name="email" type="email" maxlength="254"><label>Message</label><textarea name="message" maxlength="2000" rows="3"></textarea><button class="btn" type="submit">Submit Enquiry</button></form><p id="leadMessage" class="muted" role="status"></p></section><footer class="section muted">Digital Business Card · Powered by Digital World</footer></article>`;
+document.title=data.business_name+' | Digital World';await track(data.id,'view');if(src==='qr')await track(data.id,'qr');el.querySelectorAll('[data-event]').forEach(a=>a.addEventListener('click',()=>track(data.id,a.dataset.event)));
+document.getElementById('leadForm').addEventListener('submit',async e=>{e.preventDefault();const f=new FormData(e.currentTarget),payload={card_id:data.id,name:String(f.get('name')).trim(),phone:String(f.get('phone')).trim()||null,email:String(f.get('email')).trim()||null,message:String(f.get('message')).trim()||null,source:'public_card'};const {error}=await db.from('business_card_leads').insert(payload);document.getElementById('leadMessage').textContent=error?'Your enquiry could not be submitted. Please try again.':'Thank you. Your enquiry has been sent.';if(!error)e.currentTarget.reset();});}
 load();
