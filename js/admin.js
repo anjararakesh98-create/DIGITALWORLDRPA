@@ -194,15 +194,34 @@ async function loadAudit(){
 }
 
 
+async function adminAccountAction(action,userId,payload={}){
+ const {data,error}=await db.functions.invoke("admin-account-management",{body:{action,user_id:userId,...payload}});
+ if(error||data?.error){adminMsg.textContent="Admin account action failed: "+(data?.error||error.message);return false;}
+ adminMsg.textContent="Admin account "+action.replaceAll("_"," ")+" completed.";
+ return true;
+}
 async function loadAdminUsers(){
  adminMsg.textContent="Loading authorised admin accounts…";
  const {data,error}=await db.from("user_profiles").select("user_id,full_name,role,created_at").in("role",["admin","super_admin"]).order("created_at",{ascending:false});
  if(error){adminMsg.textContent="Could not load admin users: "+error.message;return;}
  const box=document.getElementById("admin-users-list");box.innerHTML="";
- (data||[]).forEach(x=>{const el=document.createElement("article");el.className="order-card";el.innerHTML='<div class="order-title"><div><strong>'+esc(x.full_name||"Admin account")+'</strong><span>'+esc(x.user_id)+'</span></div><b class="status">'+esc(x.role)+'</b></div><small>Created: '+esc(x.created_at?new Date(x.created_at).toLocaleString("en-IN"):"—")+'</small>';box.append(el);});
- adminMsg.textContent=(data||[]).length+" authorised admin accounts · Read-only";
+ (data||[]).forEach(x=>{
+  const el=document.createElement("article");el.className="order-card";
+  el.innerHTML='<div class="order-title"><div><strong>'+esc(x.full_name||"Admin account")+'</strong><span>'+esc(x.user_id)+'</span></div><b class="status">'+esc(x.role)+'</b></div><small>Created: '+esc(x.created_at?new Date(x.created_at).toLocaleString("en-IN"):"—")+'</small>';
+  const actions=document.createElement("div");actions.className="verify-actions";
+  if(x.role!=="super_admin"){
+   const reset=document.createElement("button");reset.type="button";reset.textContent="Set temporary password";
+   reset.addEventListener("click",async()=>{const password=prompt("Enter a temporary password (minimum 8 characters). Share it securely with the account owner.");if(password===null)return;if(password.length<8){adminMsg.textContent="Password must be at least 8 characters.";return;}if(!confirm("Reset password for "+(x.full_name||"this admin")+"?"))return;reset.disabled=true;const ok=await adminAccountAction("reset_password",x.user_id,{password});reset.disabled=false;if(ok)await loadAdminUsers();});
+   const email=document.createElement("button");email.type="button";email.className="secondary";email.textContent="Update email";
+   email.addEventListener("click",async()=>{const next=prompt("Enter the new login email address.");if(next===null)return;if(!/^[^\\s@]+@[^\\s@]+\\.[^\\s@]+$/.test(next.trim())){adminMsg.textContent="Enter a valid email address.";return;}if(!confirm("Update login email for "+(x.full_name||"this admin")+"?"))return;email.disabled=true;const ok=await adminAccountAction("update_email",x.user_id,{email:next.trim()});email.disabled=false;if(ok)await loadAdminUsers();});
+   const remove=document.createElement("button");remove.type="button";remove.className="secondary";remove.textContent="Delete admin account";
+   remove.addEventListener("click",async()=>{if(!confirm("Permanently delete this Admin account? This cannot be undone."))return;remove.disabled=true;const ok=await adminAccountAction("delete_user",x.user_id);remove.disabled=false;if(ok)await loadAdminUsers();});
+   actions.append(reset,email,remove);
+  }else{const note=document.createElement("p");note.className="muted";note.textContent="Primary Super Admin account is protected from deletion and self-management.";el.append(note);}
+  el.append(actions);box.append(el);
+ });
+ adminMsg.textContent=(data||[]).length+" authorised admin accounts";
 }
-
 async function showSection(section){
  activeSection=section;
  document.querySelectorAll(".dw-admin-sidebar [data-section]").forEach(b=>b.classList.toggle("active",b.dataset.section===section));
