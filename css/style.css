@@ -502,7 +502,7 @@ button,input,select,textarea{font:inherit}
 /* Performance, layout stability and accessible text contrast refinements */
 .dw-site{--dw-muted:#53657d}
 .dw-eyebrow{color:#a95700}
-.dw-hero h1 em,.dw-section-heading h2 em,.dw-about-section h2 em,.dw-package-section h2 em,.dw-contact-heading h2 em{color:#b85f00}
+.dw-hero h1 em,.dw-section-heading h2 em,.dw-about-section h2 em,.dw-package-section h2 em,.dw-contact-heading h2 em{color:#ff8a00}
 .dw-hero h1 em{color:#ff8a00}
 .dw-price-label{color:#a95700}
 .dw-logo-caption b{color:#a95700}
@@ -564,4 +564,33 @@ a.dw-service-card:focus-visible{outline:3px solid var(--dw-orange);outline-offse
     margin:8px 0 4px;
     padding:10px 20px!important;
   }
+}
+
+
+/* Premium navigation actions */
+.dw-nav-links>a.dw-nav-business-card{
+  display:flex;flex-direction:column;align-items:flex-start;justify-content:center;gap:3px;
+  padding:8px 13px!important;border:1px solid #ff8a00;border-radius:10px;
+  background:linear-gradient(135deg,#fff8ef 0%,#fff 100%);color:#082d6b!important;
+  box-shadow:0 4px 12px rgba(255,138,0,.14),inset 0 1px 0 rgba(255,255,255,.9);
+  transition:transform .22s ease,box-shadow .22s ease,border-color .22s ease,background .22s ease;
+}
+.dw-nav-business-title{font-size:11px;font-weight:900;line-height:1.1;letter-spacing:.015em;text-transform:uppercase;white-space:nowrap}
+.dw-nav-business-card small{align-self:flex-end;color:#f07800;font-size:8px;font-weight:900;letter-spacing:.11em;line-height:1}
+.dw-nav-links>a.dw-nav-business-card::after{display:none!important}
+.dw-nav-links>a.dw-nav-business-card:hover{transform:translateY(-2px);border-color:#f07800;background:linear-gradient(135deg,#fff0dc,#fff);box-shadow:0 8px 18px rgba(255,138,0,.22),inset 0 1px 0 #fff}
+.dw-nav-links>a.dw-nav-admin{
+  display:inline-flex;align-items:center;justify-content:center;gap:12px;padding:12px 16px!important;
+  border:1px solid #ff8a00;border-radius:9px;background:linear-gradient(135deg,#ff9d2e 0%,#ff8a00 55%,#f07800 100%);
+  color:#fff!important;font-size:12px;font-weight:900;white-space:nowrap;
+  box-shadow:0 7px 18px rgba(255,138,0,.25),inset 0 1px 0 rgba(255,255,255,.32);
+  transition:transform .22s ease,box-shadow .22s ease,filter .22s ease;
+}
+.dw-nav-links>a.dw-nav-admin::after{display:none!important}
+.dw-nav-links>a.dw-nav-admin:hover{transform:translateY(-2px);filter:saturate(1.06);box-shadow:0 10px 22px rgba(255,138,0,.32),inset 0 1px 0 rgba(255,255,255,.35)}
+.dw-nav-links>a.dw-nav-admin span{font-size:16px;color:#fff}
+.dw-nav-links>a.dw-nav-admin:active,.dw-nav-links>a.dw-nav-business-card:active{transform:translateY(1px) scale(.985)}
+@media(max-width:900px){
+ .dw-nav-links>a.dw-nav-business-card{align-self:flex-start;margin:8px 0 4px}
+ .dw-nav-links>a.dw-nav-admin{align-self:flex-start;margin:12px 0 4px}
 }
