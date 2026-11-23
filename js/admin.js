@@ -5,10 +5,22 @@ const msg=document.getElementById("login-message"), adminMsg=document.getElement
 let activeSection="clients";
 const esc=s=>String(s??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
 const rupees=n=>n==null?"Quote required":new Intl.NumberFormat("en-IN",{style:"currency",currency:"INR",maximumFractionDigits:0}).format(n);
+const ADMIN_EMAIL="anjararakesh98@gmail.com";
 async function access(){
- const {data:{user},error}=await db.auth.getUser(); if(error||!user){login.hidden=false;dash.hidden=true;return;}
- const {data:profile,error:e}=await db.from("user_profiles").select("*").eq("user_id",user.id).maybeSingle();
- if(e||!profile||!["admin","super_admin"].includes(profile.role)){await db.auth.signOut();login.hidden=false;dash.hidden=true;msg.textContent="This account is not authorised. Admin role is required.";return;}
+ const {data:{user},error}=await db.auth.getUser();
+ if(error||!user){login.hidden=false;dash.hidden=true;return;}
+ if(String(user.email||"").trim().toLowerCase()!==ADMIN_EMAIL){
+  await db.auth.signOut();
+  login.hidden=false;dash.hidden=true;
+  msg.textContent="Access denied. This account is not authorised for the Admin Dashboard.";
+  return;
+ }
+ const {data:profile,error:e}=await db.from("user_profiles").select("user_id,role").eq("user_id",user.id).maybeSingle();
+ if(e||!profile||!["admin","super_admin"].includes(profile.role)){
+  await db.auth.signOut();login.hidden=false;dash.hidden=true;
+  msg.textContent="Admin account verification failed. Contact the site owner.";
+  return;
+ }
  login.hidden=true;dash.hidden=false;await showSection("clients");
 }
 async function load(){
