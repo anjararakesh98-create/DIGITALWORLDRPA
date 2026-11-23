@@ -10,30 +10,6 @@ const rupees=n=>n==null?"Quote required":new Intl.NumberFormat("en-IN",{style:"c
 const ADMIN_EMAIL="anjararakesh98@gmail.com";
 const waPhone=value=>{const digits=String(value||"").replace(/\\D/g,"");return digits.length===10?"91"+digits:digits;};
 
-const passwordInput=document.getElementById("admin-password");
-document.getElementById("show-admin-password").addEventListener("change",e=>{passwordInput.type=e.target.checked?"text":"password";});
-document.getElementById("forgot-admin-password").addEventListener("click",async()=>{
- const email=document.querySelector('#login-form input[name="email"]').value.trim().toLowerCase();
- if(!email){msg.textContent="Enter your Admin email address first.";return;}
- msg.textContent="Sending password reset email…";
- const {error}=await db.auth.resetPasswordForEmail(email,{redirectTo:location.origin+location.pathname});
- msg.textContent=error?"Could not send reset email: "+error.message:"If this email is registered for Admin access, a password reset link has been sent.";
-});
-const resetForm=document.getElementById("admin-reset-form");
-document.getElementById("cancel-admin-reset").addEventListener("click",()=>{resetForm.hidden=true;document.getElementById("login-form").hidden=false;});
-resetForm.addEventListener("submit",async e=>{
- e.preventDefault();const password=new FormData(resetForm).get("new_password");
- if(String(password).length<8){msg.textContent="Use at least 8 characters.";return;}
- const {error}=await db.auth.updateUser({password:String(password)});
- if(error){msg.textContent="Password update failed: "+error.message;return;}
- await db.auth.signOut();resetForm.reset();resetForm.hidden=true;document.getElementById("login-form").hidden=false;msg.textContent="Password updated. Sign in with your new password.";
-});
-db.auth.onAuthStateChange((event)=>{
- if(event==="PASSWORD_RECOVERY"){
-  login.hidden=false;dash.hidden=true;document.getElementById("login-form").hidden=true;resetForm.hidden=false;msg.textContent="Choose a new password for your Admin account.";
- }
-});
-
 async function access(){
  const {data:{user},error}=await db.auth.getUser();
  if(error||!user){login.hidden=false;dash.hidden=true;return;}
